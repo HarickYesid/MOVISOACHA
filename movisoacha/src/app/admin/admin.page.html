@@ -1,0 +1,133 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/rutas"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ modoEdicion ? 'Editar Ruta' : 'Crear Nueva Ruta' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="danger" (click)="cerrarSesion()">Ver rutas registradas</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="background: #121212; color: white;">
+
+  <div style="max-width: 650px; margin: 0 auto; padding-bottom: 40px;">
+    
+    <!-- 1. INFORMACIÓN DE LA RUTA -->
+    <h3 style="color: #3880ff; border-bottom: 1px solid #333; padding-bottom: 5px;">1. Información de la Ruta</h3>
+    
+    <ion-item class="ion-margin-bottom" style="--background: #1e1e1e; color: white;">
+      <ion-input label="Nombre de la Ruta *" labelPlacement="stacked" [(ngModel)]="datosRuta.nombre" placeholder="Ej: Terreros - San Mateo"></ion-input>
+    </ion-item>
+
+    <ion-item class="ion-margin-bottom" style="--background: #1e1e1e; color: white;">
+      <ion-input label="Origen *" labelPlacement="stacked" [(ngModel)]="datosRuta.origen" placeholder="Ej: Portal Sur"></ion-input>
+    </ion-item>
+
+    <ion-item class="ion-margin-bottom" style="--background: #1e1e1e; color: white;">
+      <ion-input label="Destino *" labelPlacement="stacked" [(ngModel)]="datosRuta.destino" placeholder="Ej: San Mateo"></ion-input>
+    </ion-item>
+
+    <ion-item class="ion-margin-bottom" style="--background: #1e1e1e; color: white;">
+      <ion-input label="Tiempo Estimado" labelPlacement="stacked" [(ngModel)]="datosRuta.tiempo_estimado" placeholder="Ej: 45 mins"></ion-input>
+    </ion-item>
+
+
+    <!-- 2. INFORMACIÓN DEL TRANSPORTE (Sin el campo 'codigo') -->
+    <h3 style="color: #3880ff; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 25px;">2. Información del Transporte</h3>
+    
+    <ion-item class="ion-margin-bottom" style="--background: #1e1e1e; color: white;">
+      <ion-input label="Tipo de Transporte" labelPlacement="stacked" [(ngModel)]="datosTransporte.tipo" placeholder="Ej: Buseta"></ion-input>
+    </ion-item>
+
+    <ion-item class="ion-margin-bottom" style="--background: #1e1e1e; color: white;">
+      <ion-input label="Código de la Ruta *" labelPlacement="stacked" [(ngModel)]="datosRuta.codigo" placeholder="Ej: R-01"></ion-input>
+    </ion-item>
+
+    <ion-item class="ion-margin-bottom" style="--background: #1e1e1e; color: white;">
+      <ion-input label="Empresa" labelPlacement="stacked" [(ngModel)]="datosTransporte.empresa" placeholder="Ej: Cooptransoacha"></ion-input>
+    </ion-item>
+
+    <ion-item class="ion-margin-bottom" style="--background: #1e1e1e; color: white;">
+      <ion-input label="Color" labelPlacement="stacked" [(ngModel)]="datosTransporte.color" placeholder="Ej: Verde y Blanco"></ion-input>
+    </ion-item>
+
+    <ion-item class="ion-margin-bottom" style="--background: #1e1e1e; color: white;">
+      <ion-input label="Tamaño" labelPlacement="stacked" [(ngModel)]="datosTransporte.tamano" placeholder="Ej: Mediano"></ion-input>
+    </ion-item>
+
+
+    <!-- 3. FILA HORIZONTAL DE LAS 5 IMÁGENES -->
+    <h3 style="color: #3880ff; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 25px;">3. Fotografías del Transporte</h3>
+    <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Visualiza la imagen actual y selecciona un archivo nuevo si deseas reemplazarla.</p>
+
+    <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;">
+      <div *ngFor="let campo of camposImagenesConfig" style="background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 10px; min-width: 130px; max-width: 130px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+        
+        <span style="font-size: 12px; font-weight: bold; margin-bottom: 8px; color: #ddd; height: 30px; display: flex; align-items: center;">{{ campo.label }}</span>
+
+        <div style="width: 100px; height: 100px; background: #2a2a2a; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+          <img *ngIf="obtenerUrlVistaPrevia(campo.key)" [src]="obtenerUrlVistaPrevia(campo.key)" alt="Foto" style="width: 100%; height: 100%; object-fit: cover;" />
+          <span *ngIf="!obtenerUrlVistaPrevia(campo.key)" style="font-size: 10px; color: #777;">Sin imagen</span>
+        </div>
+
+        <input type="file" (change)="onFileSelected($event, campo.key)" accept="image/*" style="font-size: 10px; width: 100%; color: #bbb;" />
+        
+        <span *ngIf="archivosImagenes[campo.key]" style="font-size: 10px; color: #2dd36f; margin-top: 4px; font-weight: bold;">(Nuevo listo)</span>
+
+      </div>
+    </div>
+
+
+    <!-- 4. GESTIÓN Y SELECCIÓN DE PARADAS -->
+    <h3 style="color: #3880ff; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 25px;">4. Paradas de la Ruta</h3>
+    
+    <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+      <p style="margin-top: 0; font-size: 14px; color: #aaa;">Crear una parada nueva en el sistema:</p>
+      <ion-item style="--background: #2a2a2a; color: white; margin-bottom: 10px;">
+        <ion-input placeholder="Nombre de la nueva parada" [(ngModel)]="nuevaParadaNombre"></ion-input>
+      </ion-item>
+      <ion-button size="small" color="secondary" (click)="crearNuevaParada()">Crear y Agregar Parada</ion-button>
+    </div>
+
+    <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+      <p style="margin-top: 0; font-size: 14px; color: #aaa;">O selecciona una parada ya registrada:</p>
+      <ion-item style="--background: #2a2a2a; color: white; margin-bottom: 10px;">
+        <ion-select placeholder="Selecciona una parada" #selectParada (ionChange)="agregarParadaExistente(selectParada.value); selectParada.value = null;">
+          <ion-select-option *ngFor="let p of paradasDisponibles" [value]="p">{{ p.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <p style="font-weight: bold; margin-top: 15px;">Paradas ordenadas para esta ruta:</p>
+    <div *ngIf="paradasSeleccionadas.length === 0" style="color: #aaa; font-style: italic; margin-bottom: 15px;">
+      No hay paradas seleccionadas todavía.
+    </div>
+
+    <ion-list *ngIf="paradasSeleccionadas.length > 0" style="background: transparent;">
+      <ion-item *ngFor="let parada of paradasSeleccionadas; let i = index" style="--background: #1e1e1e; color: white; margin-bottom: 5px; border-radius: 6px;">
+        <ion-label><strong>{{ i + 1 }}.</strong> {{ parada.nombre }}</ion-label>
+        <ion-button slot="end" color="danger" size="small" (click)="removerParada(i)">Quitar</ion-button>
+      </ion-item>
+    </ion-list>
+
+
+    <!-- BOTONES DE ACCIÓN -->
+    <div style="display: flex; gap: 10px; margin-top: 35px;">
+      <ion-button expand="block" color="success" (click)="guardarRuta()" style="flex: 1;" [disabled]="cargando">
+        {{ modoEdicion ? 'Actualizar Cambios' : 'Guardar Ruta' }}
+      </ion-button>
+
+      <ion-button expand="block" color="medium" *ngIf="modoEdicion" (click)="descartarCambios()" style="flex: 1;" [disabled]="cargando">
+        Descartar Cambios
+      </ion-button>
+    </div>
+
+    <div *ngIf="cargando" style="text-align: center; margin-top: 20px; color: #3880ff;">
+      <p>Procesando información y guardando en la base de datos...</p>
+    </div>
+
+  </div>
+
+</ion-content>

@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar style="--background: #1976d2; color: white;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/usuario"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Buscar ruta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="background: #121212; color: white;">
+
+  <div style="max-width: 600px; margin: 20px auto;">
+
+    <!-- Tarjeta de Origen (Con opción de GPS) -->
+    <div style="background: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 12px 16px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <ion-icon name="location" color="success" style="font-size: 1.3rem;"></ion-icon>
+        <span style="font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: bold;">Punto de Partida</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <input type="text" [(ngModel)]="origenBusqueda" placeholder="Mi ubicación actual o dirección..." 
+               style="width: 100%; background: transparent; border: none; color: white; font-size: 1rem; outline: none;">
+        
+        <!-- Botón para usar GPS real -->
+        <ion-button fill="clear" size="small" (click)="usarMiUbicacion()" title="Usar GPS actual">
+          <ion-icon name="locate-outline" color="primary"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Tarjeta de Destino -->
+    <div style="background: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 12px 16px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <ion-icon name="location" color="danger" style="font-size: 1.3rem;"></ion-icon>
+        <span style="font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: bold;">Destino</span>
+      </div>
+      <input type="text" [(ngModel)]="destinoBusqueda" placeholder="Ej. Terreros, San Mateo..." 
+             style="width: 100%; background: transparent; border: none; color: white; font-size: 1rem; outline: none;">
+    </div>
+
+    <!-- Botón Buscar Rutas -->
+    <ion-button expand="block" shape="round" color="primary" (click)="buscarRutasCoincidentes()" style="height: 48px; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 12px rgba(25,118,210,0.4);">
+      Buscar rutas
+    </ion-button>
+
+    <!-- Resultados de la Búsqueda -->
+    <div *ngIf="resultados.length > 0" style="margin-top: 30px;">
+      <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 15px;">Rutas recomendadas:</h3>
+      
+      <div *ngFor="let r of resultados" (click)="verEnMapa(r)" 
+           style="background: #1a1a1a; border: 1px solid #2c2c2c; padding: 15px; border-radius: 10px; margin-bottom: 12px; cursor: pointer;">
+        <h4 style="margin: 0 0 5px 0; color: #1976d2; font-size: 1.1rem;">{{ r.nombre }}</h4>
+        <p style="margin: 0 0 4px 0; color: #ccc; font-size: 0.9rem;"><strong>Origen:</strong> {{ r.origen }}</p>
+        <p style="margin: 0 0 4px 0; color: #ccc; font-size: 0.9rem;"><strong>Destino:</strong> {{ r.destino }}</p>
+        <p style="margin: 0; color: #888; font-size: 0.85rem;">Tiempo estimado: {{ r.tiempo_estimado || 'No especificado' }}</p>
+      </div>
+    </div>
+
+    <!-- Mensaje si no hay resultados -->
+    <div *ngIf="busquedaRealizada && resultados.length === 0" style="text-align: center; margin-top: 40px; color: #aaa;">
+      <p>No se encontraron rutas directas para este trayecto.</p>
+    </div>
+
+  </div>
+
+</ion-content>

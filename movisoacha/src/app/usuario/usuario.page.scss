@@ -1,0 +1,11 @@
+/* Ajustes para garantizar el Leaflet Map ocupando toda la pantalla */
+#mapaUsuario {
+  width: 100%;
+  height: 100%;
+}
+
+/* Oculta los créditos de Leaflet si saturan la pantalla del móvil */
+.leaflet-control-attribution {
+  font-size: 8px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+}

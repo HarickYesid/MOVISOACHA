@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar style="--background: #1976d2; color: white;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/usuario"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Asistente MoviBot 🤖</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="background: #121212;">
+  <div style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px;">
+    
+    <!-- Bienvenida -->
+    <div style="background: #1e1e1e; color: #fff; padding: 12px 16px; border-radius: 12px; max-width: 85%; border-left: 4px solid #1976d2;">
+      <p style="margin: 0; font-size: 0.95rem;">¡Hola! Soy MoviBot, tu guía de transporte en Soacha. ¿A qué lugar te diriges hoy?</p>
+    </div>
+
+    <!-- Mensajes dinámicos -->
+    <div *ngFor="let mensaje of mensajes" 
+         [style.align-self]="mensaje.origen === 'usuario' ? 'flex-end' : 'flex-start'"
+         [style.background]="mensaje.origen === 'usuario' ? '#1976d2' : '#1e1e1e'"
+         style="color: #fff; padding: 12px 16px; border-radius: 12px; max-width: 85%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+      <p style="margin: 0; font-size: 0.95rem; white-space: pre-line;">{{ mensaje.texto }}</p>
+    </div>
+
+    <!-- Indicador de carga -->
+    <div *ngIf="cargando" style="background: #1e1e1e; color: #aaa; padding: 10px 14px; border-radius: 12px; align-self: flex-start; font-style: italic; font-size: 0.9rem;">
+      MoviBot está pensando la mejor ruta...
+    </div>
+
+  </div>
+</ion-content>
+
+<ion-footer style="background: #1a1a1a; border-top: 1px solid #333; padding: 8px;">
+  <div style="max-width: 600px; margin: 0 auto; display: flex; gap: 8px; align-items: center;">
+    <ion-textarea [(ngModel)]="preguntaActual" placeholder="Ej: ¿Qué ruta pasa por San Mateo?..." 
+                  rows="1" autoGrow="true"
+                  style="background: #2a2a2a; color: white; border-radius: 20px; padding: 8px 14px; font-size: 0.95rem;">
+    </ion-textarea>
+    <ion-button shape="round" color="primary" (click)="enviarMensaje()" [disabled]="!preguntaActual.trim() || cargando" style="height: 42px;">
+      <ion-icon name="send" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+</ion-footer>

@@ -1,0 +1,165 @@
+
+.acceso-content {
+  --background: #104b91;
+}
+
+.fondo {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 48, 98, 0.35),
+      rgba(4, 30, 63, 0.92)
+    ),
+    linear-gradient(135deg, #1761aa, #08264d);
+}
+
+.contenedor {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 28px 20px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.marca {
+  text-align: center;
+  color: white;
+  margin-bottom: 26px;
+}
+
+.icono-bus {
+  font-size: 58px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.marca h1 {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin: 8px 0;
+}
+
+.marca h1 span {
+  color: #42e4d0;
+}
+
+.marca p {
+  font-size: 17px;
+  margin-top: 8px;
+  color: #edf6ff;
+}
+
+.tarjeta {
+  background: #fff;
+  color: #162b46;
+  border-radius: 24px;
+  padding: 25px 20px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+}
+
+.encabezado-formulario h2 {
+  font-size: 25px;
+  font-weight: 750;
+  margin: 0 0 8px;
+}
+
+.encabezado-formulario p {
+  color: #68788e;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.campo {
+  --background: #f3f6fa;
+  --border-radius: 12px;
+  --padding-start: 12px;
+  margin: 12px 0;
+  border: 1px solid #e1e8f0;
+  border-radius: 12px;
+  color: #162b46;               /* Color del texto que escribe el usuario */
+  --highlight-color: #1555a0;   /* Color de la línea inferior cuando está seleccionado */
+  --color: #162b46;
+}
+
+.campo ion-icon {
+  color: #1d5798;
+  font-size: 21px;
+}
+
+.ayuda-contrasena {
+  color: #000000;
+  font-size: 12px;
+  margin: 6px 4px 12px;
+}
+
+.boton-principal {
+  margin-top: 22px;
+  --background: #1555a0;
+  --background-activated: #0d3c75;
+  --border-radius: 12px;
+  --box-shadow: none;
+  font-weight: 700;
+  height: 50px;
+}
+
+.mensaje {
+  margin: 15px 0 0;
+  padding: 10px;
+  border-radius: 9px;
+  background: #e6f8ed;
+  color: #176b3a;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.mensaje.error {
+  background: #fff0f0;
+  color: #b42318;
+}
+
+.separador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #8a97a8;
+  margin: 22px 0 12px;
+}
+
+.separador::before,
+.separador::after {
+  content: "";
+  height: 1px;
+  background: #e2e8f0;
+  flex: 1;
+}
+
+.cambiar-modo {
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #596a80;
+  margin-bottom: 0;
+}
+
+.cambiar-modo button {
+  border: 0;
+  background: transparent;
+  color: #1555a0;
+  font-weight: 750;
+  font-size: inherit;
+  padding: 4px;
+}
+
+.pie {
+  text-align: center;
+  color: #edf6ff;
+  font-size: 13px;
+  margin-top: 22px;
+}

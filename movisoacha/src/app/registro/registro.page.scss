@@ -1,0 +1,25 @@
+.registro-container {
+  max-width: 450px;
+  margin: 35px auto;
+}
+
+h2 {
+  text-align: center;
+  font-weight: bold;
+}
+
+.registro-container > p {
+  text-align: center;
+  color: var(--ion-color-medium);
+  margin-bottom: 25px;
+}
+
+ion-item {
+  margin-bottom: 12px;
+  --border-radius: 10px;
+}
+
+ion-button {
+  margin-top: 25px;
+  height: 48px;
+}

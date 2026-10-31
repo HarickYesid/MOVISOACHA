@@ -1,0 +1,161 @@
+<ion-header>
+  <ion-toolbar style="--background: #1976d2; color: white;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/rutas-usuario"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalles de la Ruta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="background: #121212; color: white;">
+
+  <div style="max-width: 700px; margin: 10px auto; padding-bottom: 40px;">
+
+    <!-- Mensaje de Carga -->
+    <div *ngIf="cargando" style="text-align: center; margin-top: 60px;">
+      <ion-spinner name="crescent" color="primary" style="width: 40px; height: 40px;"></ion-spinner>
+      <p style="color: #aaa; margin-top: 10px;">Cargando información...</p>
+    </div>
+
+    <div *ngIf="!cargando && ruta">
+
+      <!-- ================= 1. INFORMACIÓN DE LA RUTA ================= -->
+      <h3 style="color: #2f80ed; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 6px;">
+        1. Información de la Ruta
+      </h3>
+
+      <!-- Tarjeta: Nombre de la Ruta -->
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
+        <span style="font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Nombre de la Ruta</span>
+        <span style="font-size: 1rem; color: #ffffff; font-weight: 500;">{{ ruta.nombre }}</span>
+      </div>
+
+      <!-- Tarjeta: Origen -->
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
+        <span style="font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Origen</span>
+        <span style="font-size: 1rem; color: #ffffff; font-weight: 500;">{{ ruta.origen }}</span>
+      </div>
+
+      <!-- Tarjeta: Destino -->
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
+        <span style="font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Destino</span>
+        <span style="font-size: 1rem; color: #ffffff; font-weight: 500;">{{ ruta.destino }}</span>
+      </div>
+
+      <!-- Tarjeta: Tiempo Estimado -->
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 12px 16px; margin-bottom: 25px;">
+        <span style="font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Tiempo Estimado</span>
+        <span style="font-size: 1rem; color: #ffffff; font-weight: 500;">{{ ruta.tiempo_estimado || 'No especificado' }}</span>
+      </div>
+
+
+      <!-- ================= 2. TRAZADO DEL RECORRIDO ================= -->
+      <h3 style="color: #2f80ed; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 6px;">
+        2. Trazado del Recorrido
+      </h3>
+      
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
+        <p style="color: #bbb; font-size: 0.9rem; margin-top: 0; margin-bottom: 12px;">Visualiza el trayecto configurado para esta ruta en el mapa:</p>
+        
+        <!-- Contenedor del Mapa Leaflet -->
+        <div id="mapa-detalle-ruta" style="height: 300px; width: 100%; border-radius: 10px; border: 1px solid #333;"></div>
+      </div>
+
+
+      <!-- ================= 3. INFORMACIÓN DEL TRANSPORTE ================= -->
+      <h3 style="color: #2f80ed; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 6px;">
+        3. Información del Transporte
+      </h3>
+
+      <!-- Tarjeta: Tipo de Transporte -->
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
+        <span style="font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Tipo de Transporte</span>
+        <span style="font-size: 1rem; color: #ffffff; font-weight: 500;">{{ ruta.transporte?.tipo || 'No especificado' }}</span>
+      </div>
+
+      <!-- Tarjeta: Código de la Ruta -->
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
+        <span style="font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Código de la Ruta</span>
+        <span style="font-size: 1rem; color: #ffffff; font-weight: 500;">{{ ruta.transporte?.codigo || ruta.codigo || 'No especificado' }}</span>
+      </div>
+
+      <!-- Tarjeta: Empresa -->
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
+        <span style="font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Empresa</span>
+        <span style="font-size: 1rem; color: #ffffff; font-weight: 500;">{{ ruta.transporte?.empresa || 'No especificada' }}</span>
+      </div>
+
+      <!-- Tarjeta: Color -->
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
+        <span style="font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Color</span>
+        <span style="font-size: 1rem; color: #ffffff; font-weight: 500;">{{ ruta.transporte?.color || 'No especificado' }}</span>
+      </div>
+
+      <!-- Tarjeta: Tamaño -->
+      <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 12px 16px; margin-bottom: 25px;">
+        <span style="font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Tamaño</span>
+        <span style="font-size: 1rem; color: #ffffff; font-weight: 500;">{{ ruta.transporte?.tamano || 'No especificado' }}</span>
+      </div>
+
+
+      <!-- ================= 4. FOTOGRAFÍAS DEL TRANSPORTE ================= -->
+      <h3 style="color: #2f80ed; font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 6px;">
+        4. Fotografías del Transporte
+      </h3>
+      <p style="color: #888; font-size: 0.85rem; margin-bottom: 15px;">Visualiza las imágenes oficiales asociadas a este transporte.</p>
+
+      <!-- Cuadrícula de Fotos -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px;">
+        
+        <!-- Letrero -->
+        <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 8px; text-align: center;">
+          <span style="font-size: 0.75rem; color: #ccc; display: block; margin-bottom: 6px; font-weight: 500;">Letrero</span>
+          <div style="height: 90px; background: #111; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img *ngIf="ruta.transporte?.letrero_url" [src]="ruta.transporte.letrero_url" alt="Letrero" style="width: 100%; height: 100%; object-fit: cover;">
+            <span *ngIf="!ruta.transporte?.letrero_url" style="font-size: 0.7rem; color: #666;">Sin foto</span>
+          </div>
+        </div>
+
+        <!-- Frontal -->
+        <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 8px; text-align: center;">
+          <span style="font-size: 0.75rem; color: #ccc; display: block; margin-bottom: 6px; font-weight: 500;">Frontal</span>
+          <div style="height: 90px; background: #111; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img *ngIf="ruta.transporte?.frente_url" [src]="ruta.transporte.frente_url" alt="Frontal" style="width: 100%; height: 100%; object-fit: cover;">
+            <span *ngIf="!ruta.transporte?.frente_url" style="font-size: 0.7rem; color: #666;">Sin foto</span>
+          </div>
+        </div>
+
+        <!-- Trasera -->
+        <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 8px; text-align: center;">
+          <span style="font-size: 0.75rem; color: #ccc; display: block; margin-bottom: 6px; font-weight: 500;">Trasera</span>
+          <div style="height: 90px; background: #111; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img *ngIf="ruta.transporte?.atras_url" [src]="ruta.transporte.atras_url" alt="Trasera" style="width: 100%; height: 100%; object-fit: cover;">
+            <span *ngIf="!ruta.transporte?.atras_url" style="font-size: 0.7rem; color: #666;">Sin foto</span>
+          </div>
+        </div>
+
+        <!-- Lat. Derecho -->
+        <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 8px; text-align: center;">
+          <span style="font-size: 0.75rem; color: #ccc; display: block; margin-bottom: 6px; font-weight: 500;">Lat. Derecho</span>
+          <div style="height: 90px; background: #111; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img *ngIf="ruta.transporte?.ladoderecho_url" [src]="ruta.transporte.ladoderecho_url" alt="Lat. Derecho" style="width: 100%; height: 100%; object-fit: cover;">
+            <span *ngIf="!ruta.transporte?.ladoderecho_url" style="font-size: 0.7rem; color: #666;">Sin foto</span>
+          </div>
+        </div>
+
+        <!-- Lat. Izq -->
+        <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 8px; padding: 8px; text-align: center;">
+          <span style="font-size: 0.75rem; color: #ccc; display: block; margin-bottom: 6px; font-weight: 500;">Lat. Izq</span>
+          <div style="height: 90px; background: #111; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img *ngIf="ruta.transporte?.ladoizquierdo_url" [src]="ruta.transporte.ladoizquierdo_url" alt="Lat. Izq" style="width: 100%; height: 100%; object-fit: cover;">
+            <span *ngIf="!ruta.transporte?.ladoizquierdo_url" style="font-size: 0.7rem; color: #666;">Sin foto</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>

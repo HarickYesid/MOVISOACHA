@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Trazar Ruta en Soacha</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Contenedor obligatorio para Leaflet -->
+  <div id="mapId" style="width: 100%; height: 75vh;"></div>
+
+  <div style="padding: 15px; display: flex; gap: 10px; background: #121212;">
+    <ion-button expand="block" color="warning" (click)="deshacerUltimoPunto()" style="flex: 1;">
+      Deshacer Punto
+    </ion-button>
+    <ion-button expand="block" color="success" (click)="guardarTrazado()" style="flex: 1;">
+      Guardar Trazado
+    </ion-button>
+  </div>
+</ion-content>

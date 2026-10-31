@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Registro de prueba</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div class="registro-container">
+
+    <h2>Crear cuenta</h2>
+    <p>Registra un usuario de prueba en MoviSoacha.</p>
+
+    <form (ngSubmit)="registrar()">
+
+      <ion-item>
+        <ion-input
+          label="Nombre"
+          labelPlacement="stacked"
+          type="text"
+          placeholder="Tu nombre"
+          [(ngModel)]="nombre"
+          name="nombre"
+          required>
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Correo electrónico"
+          labelPlacement="stacked"
+          type="email"
+          placeholder="ejemplo@correo.com"
+          [(ngModel)]="correo"
+          name="correo"
+          required>
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Contraseña"
+          labelPlacement="stacked"
+          type="password"
+          placeholder="Mínimo 8 caracteres"
+          [(ngModel)]="contrasena"
+          name="contrasena"
+          minlength="8"
+          required>
+        </ion-input>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        type="submit"
+        class="ion-margin-top"
+        [disabled]="cargando">
+        {{ cargando ? 'Registrando...' : 'Registrarme' }}
+      </ion-button>
+
+    </form>
+
+    <ion-text color="success" *ngIf="mensajeExito">
+      <p>{{ mensajeExito }}</p>
+    </ion-text>
+
+    <ion-text color="danger" *ngIf="mensajeError">
+      <p>{{ mensajeError }}</p>
+    </ion-text>
+
+  </div>
+
+</ion-content>

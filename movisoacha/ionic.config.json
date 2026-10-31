@@ -1,0 +1,7 @@
+{
+  "name": "movisoacha",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
