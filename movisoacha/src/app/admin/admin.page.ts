@@ -30,7 +30,8 @@ export class AdminPage implements OnInit {
   // Eliminado el campo 'codigo' de aquí
   datosTransporte: any = { 
     tipo: '',
-    empresa: '',       
+    empresa: '', 
+    codigo: '',       
     color: '',   
     tamano: '',
     letrero_url: '',
@@ -96,23 +97,6 @@ export class AdminPage implements OnInit {
     return this.datosTransporte[tipoImagen] || '';
   }
 
-  async crearNuevaParada() {
-    if (!this.nuevaParadaNombre.trim()) {
-      alert('Escribe el nombre de la nueva parada.');
-      return;
-    }
-    try {
-      const nueva = await this.adminRutasService.crearParada(this.nuevaParadaNombre.trim());
-      await this.cargarParadasGlobales();
-      this.paradasSeleccionadas.push(nueva);
-      this.nuevaParadaNombre = '';
-      alert('¡Parada creada y agregada con éxito!');
-    } catch (error: any) {
-      console.error('Error al crear parada:', error);
-      alert('No se pudo crear la parada: ' + error.message);
-    }
-  }
-
   agregarParadaExistente(parada: any) {
     if (parada && !this.paradasSeleccionadas.some(p => p.id_parada === parada.id_parada)) {
       this.paradasSeleccionadas.push(parada);
@@ -137,6 +121,7 @@ export class AdminPage implements OnInit {
           nombre: rutaData.nombre || '',
           origen: rutaData.origen || '',
           destino: rutaData.destino || '',
+          codigo: rutaData.codigo || '',
           tiempo_estimado: rutaData.tiempo_estimado || ''
         };
 
@@ -213,7 +198,7 @@ export class AdminPage implements OnInit {
     this.modoEdicion = false;
     this.idRutaEditando = null;
     this.idTransporteEditando = null;
-    this.datosRuta = { nombre: '', origen: '', destino: '', tiempo_estimado: '' };
+    this.datosRuta = { nombre: '', origen: '', destino: '',  codigo: '', tiempo_estimado: '' };
     this.datosTransporte = { tipo: '', letrero_url: '', frente_url: '', atras_url: '', ladoderecho_url: '', ladoizquierdo_url: '' };
     this.paradasSeleccionadas = [];
     this.archivosImagenes = {};
@@ -222,6 +207,6 @@ export class AdminPage implements OnInit {
   }
 
   cerrarSesion() {
-    this.router.navigate(['/rutas']);
+    this.router.navigate(['/panel-admin']);
   }
 }

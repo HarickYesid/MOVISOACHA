@@ -1,0 +1,64 @@
+<ion-content [fullscreen]="true" class="acceso-content">
+  <div class="fondo" style="background-image: url('assets/icon/fondo.jpg');"></div>
+
+  <main class="contenedor">
+    <section class="marca">
+      <div class="icono-bus">
+        <ion-icon name="bus-outline"></ion-icon>
+      </div>
+      <h1>Movi<span>Soacha</span></h1>
+      <p>Actualización de credenciales</p>
+    </section>
+
+    <section class="tarjeta">
+      <div class="encabezado-formulario">
+        <h2>Nueva contraseña</h2>
+        <p>Ingresa tu nueva contraseña para recuperar el acceso a tu cuenta.</p>
+      </div>
+
+      <form (ngSubmit)="guardarNuevaContrasena()">
+        
+        <ion-item class="campo" lines="none">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-input
+            label="Nueva contraseña"
+            labelPlacement="stacked"
+            [type]="mostrarContrasena ? 'text' : 'password'"
+            name="nuevaContrasena"
+            placeholder="Mínimo 8 caracteres"
+            [(ngModel)]="nuevaContrasena"
+            required>
+          </ion-input>
+
+          <ion-button
+            type="button"
+            fill="clear"
+            color="medium"
+            slot="end"
+            (click)="mostrarContrasena = !mostrarContrasena">
+            <ion-icon [name]="mostrarContrasena ? 'eye-off-outline' : 'eye-outline'" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <p class="ayuda-contrasena">Usa al menos 8 caracteres seguros.</p>
+
+        <ion-button
+          expand="block"
+          type="submit"
+          class="boton-principal"
+          [disabled]="cargando">
+          {{ cargando ? 'Actualizando...' : 'Actualizar contraseña' }}
+          <ion-icon name="checkmark-circle-outline" slot="end"></ion-icon>
+        </ion-button>
+      </form>
+
+      <p class="mensaje" *ngIf="mensaje" [class.error]="esError">
+        {{ mensaje }}
+      </p>
+    </section>
+
+    <p class="pie">
+      Explora Soacha. Encuentra tu ruta.
+    </p>
+  </main>
+</ion-content>

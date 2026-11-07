@@ -1,90 +1,159 @@
-<ion-header>
-  <ion-toolbar color="dark">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/admin"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Rutas Registradas</ion-title>
-
-    <ion-buttons slot="end">
-      <ion-button color="danger" routerLink="/admin">
-        <ion-icon name="settings-outline" slot="start"></ion-icon>
-        Volver a inicio 
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding" style="background: #121212; color: white;">
-
-  <!-- Contenedor centralizado para limitar el ancho y darle mejor presencia visual -->
-  <div style="max-width: 800px; margin: 20px auto; padding: 0 10px;">
-
-    <!-- Mensaje de Carga -->
-    <div *ngIf="cargando" style="text-align: center; margin-top: 60px;">
-      <ion-spinner name="crescent" color="tertiary" style="width: 40px; height: 40px;"></ion-spinner>
-      <p style="color: #aaa; margin-top: 10px;">Cargando rutas desde la base de datos...</p>
-    </div>
-
-    <!-- Mensaje sin registros -->
-    <div *ngIf="!cargando && rutas.length === 0" style="text-align: center; margin-top: 60px; background: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px dashed #444;">
-      <ion-icon name="map-outline" style="font-size: 48px; color: #666; margin-bottom: 10px;"></ion-icon>
-      <p style="color: #ccc; font-size: 1.1rem; margin: 0;">No se encontraron rutas registradas.</p>
-    </div>
-
-    <!-- Lista de Rutas -->
-    <div *ngIf="!cargando && rutas.length > 0">
-      <div *ngFor="let r of rutas" style="background: linear-gradient(145deg, #1e1e1e, #181818); padding: 20px; margin-bottom: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px; border: 1px solid #2c2c2c; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
-        
-        <!-- Columna Izquierda: Información y Botones -->
-        <div style="flex: 1;">
-          <h2 style="margin: 0 0 10px 0; color: #ffffff; font-size: 1.3rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-            <ion-icon name="navigate-circle-outline" color="tertiary" style="font-size: 1.4rem;"></ion-icon>
-            {{ r.nombre }}
-          </h2>
-          
-          <div style="background: rgba(255, 255, 255, 0.03); padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; border-left: 3px solid #3880ff;">
-            <p style="margin: 0 0 4px 0; color: #ddd; font-size: 0.95rem;">
-              <strong>Origen:</strong> {{ r.origen }}
-            </p>
-            <p style="margin: 0 0 4px 0; color: #ddd; font-size: 0.95rem;">
-              <strong>Destino:</strong> {{ r.destino }}
-            </p>
-            <p *ngIf="r.tiempo_estimado" style="margin: 0; color: #aaa; font-size: 0.9rem;">
-              <strong>Tiempo estimado:</strong> {{ r.tiempo_estimado }}
-            </p>
-          </div>
-
-          <!-- Botones de Acción -->
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-            
-            <button (click)="eliminarRuta(r.id_ruta, $event)" style="background: #d9534f; color: white; border: none; padding: 7px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 4px;">
-              <ion-icon name="trash-outline"></ion-icon> ELIMINAR
-            </button>
-            
-            <button (click)="editarRuta(r, $event)" style="background: #f0ad4e; color: white; border: none; padding: 7px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 4px;">
-              <ion-icon name="create-outline"></ion-icon> EDITAR
-            </button>
-
-            <!-- Botón para ir al mapa pasando el id_ruta específico -->
-            <ion-button size="small" color="tertiary" [routerLink]="['/admin-mapa']" [queryParams]="{ id: r.id_ruta }" style="font-weight: 500; text-transform: none;">
-              <ion-icon name="map-outline" slot="start"></ion-icon>
-              Generar Trazado
-            </ion-button>
-
-          </div>
+<ion-content [fullscreen]="true" class="admin-content">
+  <div class="layout-container">
+    
+    <!-- BARRA LATERAL (Sidebar con enlace activo en Rutas en color rojo corporativo) -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <ion-icon name="bus-outline"></ion-icon>
         </div>
-
-        <!-- Columna Derecha: Imagen del letrero apuntando a letrero_url -->
-        <div *ngIf="r.transporte && r.transporte.letrero_url" style="flex-shrink: 0; text-align: center;">
-          <div style="background: #111; padding: 4px; border-radius: 10px; border: 1px solid #333; box-shadow: 0 2px 8px rgba(0,0,0,0.5);">
-            <img [src]="r.transporte.letrero_url" alt="Letrero" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
-          </div>
-          <span style="font-size: 0.75rem; color: #888; margin-top: 4px; display: block;">Letrero</span>
+        <div class="logo-text">
+          <h2>Movi<span>Soacha</span></h2>
+          <p>Muévete mejor</p>
         </div>
-
       </div>
-    </div>
+
+      <nav class="menu-nav">
+        <button class="nav-btn" routerLink="/panel-admin">
+          <ion-icon name="home-outline"></ion-icon>
+          <span>Panel Principal</span>
+        </button>
+
+        <!-- Botón activo en rojo -->
+        <button class="nav-btn active-rojo" routerLink="/rutas">
+          <ion-icon name="map-outline"></ion-icon>
+          <span>Rutas</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/paradas">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>Paradas</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/empresas">
+          <ion-icon name="bus-outline"></ion-icon>
+          <span>Empresas</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/lista-usuarios">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Usuarios</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/reportes">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+          <span>Reportes</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/configuracion">
+          <ion-icon name="settings-outline"></ion-icon>
+          <span>Configuración</span>
+        </button>
+      </nav>
+
+      <div class="logout-container">
+        <button class="logout-btn" (click)="cerrarSesion()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-panel">
+      
+      <!-- Encabezado superior -->
+      <header class="top-header">
+        <div class="title-section">
+          <h1>Panel de Administrador</h1>
+          <p>Gestiona la información del sistema</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </button>
+          <ion-avatar class="user-avatar">
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </ion-avatar>
+        </div>
+      </header>
+
+      <!-- Tarjeta Principal de Gestión -->
+      <section class="gestion-card">
+        
+        <div class="gestion-header-top">
+          <div class="title-block">
+            <h2>Gestión de Rutas:</h2>
+            <h1>Lista Completa</h1>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Contador (En lugar del botón de agregar) -->
+        <div class="contador-card">
+          <div class="numero">{{ rutasFiltradas.length }}</div>
+          <div class="etiqueta">Rutas registradas</div>
+        </div>
+
+        <!-- Mensaje de Carga -->
+        <div *ngIf="cargando" style="text-align: center; margin-top: 40px;">
+          <ion-spinner name="crescent" color="primary" style="width: 40px; height: 40px;"></ion-spinner>
+          <p style="color: #666; margin-top: 10px;">Cargando rutas desde la base de datos...</p>
+        </div>
+
+        <!-- Lista de Rutas -->
+        <div class="lista-rutas" *ngIf="!cargando">
+          <div class="ruta-card-item" *ngFor="let r of rutasFiltradas">
+            
+            <!-- Columna Izquierda: Información y Botones -->
+            <div class="ruta-info-block">
+              <h3>
+                <ion-icon name="navigate-circle-outline"></ion-icon>
+                {{ r.nombre }}
+              </h3>
+              
+              <div class="ruta-detalles-box">
+                <p><strong>Origen:</strong> {{ r.origen }}</p>
+                <p><strong>Destino:</strong> {{ r.destino }}</p>
+                <p *ngIf="r.tiempo_estimado"><strong>Tiempo estimado:</strong> {{ r.tiempo_estimado }}</p>
+              </div>
+
+              <!-- Botones de Acción -->
+              <div class="acciones-row">
+                <button (click)="eliminarRuta(r.id_ruta, $event)" class="btn-eliminar">
+                  <ion-icon name="trash-outline"></ion-icon> ELIMINAR
+                </button>
+                
+                <button (click)="editarRuta(r, $event)" class="btn-editar">
+                  <ion-icon name="create-outline"></ion-icon> EDITAR
+                </button>
+
+                <ion-button size="small" color="tertiary" [routerLink]="['/admin-mapa']" [queryParams]="{ id: r.id_ruta }" class="btn-trazado">
+                  <ion-icon name="map-outline" slot="start"></ion-icon>
+                  Generar Trazado
+                </ion-button>
+              </div>
+            </div>
+
+            <!-- Columna Derecha: Imagen del letrero -->
+            <div class="ruta-imagen-block" *ngIf="r.transporte && r.transporte.letrero_url">
+              <div class="letrero-frame">
+                <img [src]="r.transporte.letrero_url" alt="Letrero">
+              </div>
+              <span>Letrero</span>
+            </div>
+
+          </div>
+
+          <!-- Estado vacío -->
+          <div class="empty-state" *ngIf="rutasFiltradas.length === 0">
+            <ion-icon name="map-outline"></ion-icon>
+            <p>No se encontraron rutas registradas.</p>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
 
   </div>
-
 </ion-content>

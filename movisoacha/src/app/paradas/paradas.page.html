@@ -1,0 +1,150 @@
+<ion-content [fullscreen]="true" class="admin-content">
+  <div class="layout-container">
+    
+    <!-- BARRA LATERAL (Sidebar) -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <ion-icon name="bus-outline"></ion-icon>
+        </div>
+        <div class="logo-text">
+          <h2>Movi<span>Soacha</span></h2>
+          <p>Muévete mejor</p>
+        </div>
+      </div>
+
+      <nav class="menu-nav">
+        <button class="nav-btn" routerLink="/panel-admin">
+          <ion-icon name="home-outline"></ion-icon>
+          <span>Panel Principal</span>
+        </button>
+        <button class="nav-btn" routerLink="/rutas">
+          <ion-icon name="map-outline"></ion-icon>
+          <span>Rutas</span>
+        </button>
+        <button class="nav-btn active" routerLink="/paradas">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>Paradas</span>
+        </button>
+        <button class="nav-btn" routerLink="/empresas">
+          <ion-icon name="bus-outline"></ion-icon>
+          <span>Empresas</span>
+        </button>
+        <button class="nav-btn" routerLink="/lista-usuarios">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Usuarios</span>
+        </button>
+        <button class="nav-btn" routerLink="/reportes">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+          <span>Reportes</span>
+        </button>
+        <button class="nav-btn" routerLink="/configuracion">
+          <ion-icon name="settings-outline"></ion-icon>
+          <span>Configuración</span>
+        </button>
+      </nav>
+
+      <div class="logout-container">
+        <button class="logout-btn" (click)="cerrarSesion()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-panel">
+      
+      <header class="top-header">
+        <div class="title-section">
+          <h1>Panel de Administrador</h1>
+          <p>Gestiona la información del sistema</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </button>
+          <ion-avatar class="user-avatar">
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </ion-avatar>
+        </div>
+      </header>
+
+      <section class="gestion-card">
+        
+        <div class="gestion-header-top">
+          <div class="title-block">
+            <h2>Gestión de Paradas:</h2>
+            <h1>Lista Completa</h1>
+          </div>
+          
+          <button class="btn-agregar" (click)="toggleFormulario()">
+            <ion-icon [name]="mostrarFormulario ? 'close-outline' : 'add-outline'"></ion-icon>
+            {{ mostrarFormulario ? 'CANCELAR' : 'AGREGAR PARADA' }}
+          </button>
+        </div>
+
+        <!-- FORMULARIO PARA CREAR NUEVA PARADA (Se despliega al hacer clic) -->
+        <div class="form-crear-card" *ngIf="mostrarFormulario">
+          <h3>Nueva Parada</h3>
+          <form (ngSubmit)="guardarParada()">
+            <div class="form-group">
+              <label>Nombre de la Parada</label>
+              <input type="text" [(ngModel)]="nuevoNombre" name="nuevoNombre" placeholder="Ej. Parque Principal de Soacha" required />
+            </div>
+
+            <div class="form-group">
+              <label>Dirección / Referencia</label>
+              <input type="text" [(ngModel)]="nuevaDireccion" name="nuevaDireccion" placeholder="Ej. Carrera 7 #12-34" required />
+            </div>
+
+            <button type="submit" class="btn-guardar" [disabled]="cargando">
+              {{ cargando ? 'Guardando...' : 'Guardar Parada' }}
+            </button>
+          </form>
+        </div>
+
+        <!-- Tarjeta de Contador -->
+        <div class="contador-card">
+          <div class="numero">{{ paradas.length }}</div>
+          <div class="etiqueta">Paradas registradas</div>
+        </div>
+
+        <!-- Barra de Búsqueda -->
+        <div class="search-filter-container">
+          <div class="search-bar-wrapper">
+            <ion-icon name="search-outline"></ion-icon>
+            <input 
+              type="text" 
+              placeholder="Buscar paradas..." 
+              [(ngModel)]="textoBusqueda" 
+              (input)="filtrarParadas()" />
+          </div>
+          <button class="filter-btn">
+            <ion-icon name="options-outline"></ion-icon>
+          </button>
+        </div>
+
+        <!-- Lista de Paradas -->
+        <div class="lista-paradas">
+          <div class="parada-item" *ngFor="let parada of paradasFiltradas">
+            <div class="parada-info">
+              <h3>{{ parada.nombre }}</h3>
+              <p>{{ parada.direccion }}</p>
+            </div>
+            <button class="btn-eliminar" (click)="eliminarParada(parada.id_parada)" title="Eliminar parada">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+
+          <div class="empty-state" *ngIf="paradasFiltradas.length === 0">
+            <p>No se encontraron paradas registradas.</p>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+</ion-content>

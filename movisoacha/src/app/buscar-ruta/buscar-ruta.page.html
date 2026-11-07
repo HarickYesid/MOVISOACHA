@@ -1,64 +1,96 @@
 <ion-header>
   <ion-toolbar style="--background: #1976d2; color: white;">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/usuario"></ion-back-button>
+      <ion-back-button defaultHref="/rutas-usuario"></ion-back-button>
     </ion-buttons>
-    <ion-title>Buscar ruta</ion-title>
+    <ion-title>Buscar Ruta en MoviSoacha</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding" style="background: #121212; color: white;">
 
-  <div style="max-width: 600px; margin: 20px auto;">
+  <div style="max-width: 600px; margin: 0 auto; padding-bottom: 30px;">
 
-    <!-- Tarjeta de Origen (Con opción de GPS) -->
-    <div style="background: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 12px 16px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-        <ion-icon name="location" color="success" style="font-size: 1.3rem;"></ion-icon>
-        <span style="font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: bold;">Punto de Partida</span>
-      </div>
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <input type="text" [(ngModel)]="origenBusqueda" placeholder="Mi ubicación actual o dirección..." 
-               style="width: 100%; background: transparent; border: none; color: white; font-size: 1rem; outline: none;">
-        
-        <!-- Botón para usar GPS real -->
-        <ion-button fill="clear" size="small" (click)="usarMiUbicacion()" title="Usar GPS actual">
-          <ion-icon name="locate-outline" color="primary"></ion-icon>
-        </ion-button>
-      </div>
-    </div>
-
-    <!-- Tarjeta de Destino -->
-    <div style="background: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 12px 16px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-        <ion-icon name="location" color="danger" style="font-size: 1.3rem;"></ion-icon>
-        <span style="font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: bold;">Destino</span>
-      </div>
-      <input type="text" [(ngModel)]="destinoBusqueda" placeholder="Ej. Terreros, San Mateo..." 
-             style="width: 100%; background: transparent; border: none; color: white; font-size: 1rem; outline: none;">
-    </div>
-
-    <!-- Botón Buscar Rutas -->
-    <ion-button expand="block" shape="round" color="primary" (click)="buscarRutasCoincidentes()" style="height: 48px; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 12px rgba(25,118,210,0.4);">
-      Buscar rutas
-    </ion-button>
-
-    <!-- Resultados de la Búsqueda -->
-    <div *ngIf="resultados.length > 0" style="margin-top: 30px;">
-      <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 15px;">Rutas recomendadas:</h3>
+    <!-- Tarjeta de Filtros de Búsqueda -->
+    <div style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 12px; padding: 16px; margin-bottom: 20px; position: relative;">
       
-      <div *ngFor="let r of resultados" (click)="verEnMapa(r)" 
-           style="background: #1a1a1a; border: 1px solid #2c2c2c; padding: 15px; border-radius: 10px; margin-bottom: 12px; cursor: pointer;">
-        <h4 style="margin: 0 0 5px 0; color: #1976d2; font-size: 1.1rem;">{{ r.nombre }}</h4>
-        <p style="margin: 0 0 4px 0; color: #ccc; font-size: 0.9rem;"><strong>Origen:</strong> {{ r.origen }}</p>
-        <p style="margin: 0 0 4px 0; color: #ccc; font-size: 0.9rem;"><strong>Destino:</strong> {{ r.destino }}</p>
-        <p style="margin: 0; color: #888; font-size: 0.85rem;">Tiempo estimado: {{ r.tiempo_estimado || 'No especificado' }}</p>
+      <!-- Punto de partida con GPS -->
+      <div style="margin-bottom: 14px;">
+        <label style="font-size: 0.75rem; color: #aaa; display: block; margin-bottom: 4px; font-weight: 600;">PUNTO DE PARTIDA</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" [(ngModel)]="puntoPartida" placeholder="Ej. Ciudadela Sucre, San Mateo..." style="flex: 1; background: #121212; border: 1px solid #333; border-radius: 8px; color: white; padding: 10px; font-size: 0.9rem;" />
+          <ion-button fill="outline" color="primary" (click)="obtenerUbicacionActual()" title="Usar mi ubicación GPS" style="margin: 0; height: 42px;">
+            <ion-icon name="location-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
       </div>
+
+      <!-- Destino con Autocompletado -->
+      <div style="margin-bottom: 14px; position: relative;">
+        <label style="font-size: 0.75rem; color: #aaa; display: block; margin-bottom: 4px; font-weight: 600;">DESTINO</label>
+        <input type="text" [(ngModel)]="destinoBusqueda" (input)="onDestinoInput()" placeholder="Ej. Parque Campestre, Autopista..." style="width: 100%; background: #121212; border: 1px solid #333; border-radius: 8px; color: white; padding: 10px; font-size: 0.9rem; box-sizing: border-box;" autocomplete="off" />
+        
+        <!-- Lista desplegable de sugerencias de destino -->
+        <div *ngIf="destinosSugeridos.length > 0" style="position: absolute; top: 100%; left: 0; right: 0; background: #1e1e1e; border: 1px solid #333; border-radius: 0 0 8px 8px; z-index: 100; max-height: 150px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+          <div *ngFor="let sug of destinosSugeridos" (click)="seleccionarDestino(sug)" style="padding: 10px; font-size: 0.85rem; color: #ddd; border-bottom: 1px solid #282828; cursor: pointer;">
+            📍 {{ sug }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón de Búsqueda -->
+      <ion-button expand="block" color="primary" (click)="buscarRutas()" style="font-weight: 600; text-transform: none; --border-radius: 8px;">
+        <ion-icon name="search-outline" slot="start"></ion-icon> Buscar Rutas Disponibles
+      </ion-button>
     </div>
 
-    <!-- Mensaje si no hay resultados -->
-    <div *ngIf="busquedaRealizada && resultados.length === 0" style="text-align: center; margin-top: 40px; color: #aaa;">
-      <p>No se encontraron rutas directas para este trayecto.</p>
+    <!-- Indicador de Carga -->
+    <div *ngIf="cargando" style="text-align: center; margin-top: 40px;">
+      <ion-spinner name="crescent" color="primary" style="width: 35px; height: 35px;"></ion-spinner>
+      <p style="color: #aaa; margin-top: 8px; font-size: 0.85rem;">Buscando rutas...</p>
+    </div>
+
+    <!-- Lista de Rutas Encontradas -->
+    <div *ngIf="!cargando">
+      <h3 style="color: #fff; font-size: 1rem; font-weight: 700; margin-bottom: 12px;">
+        Resultados ({{ rutasEncontradas.length }})
+      </h3>
+
+      <div *ngIf="rutasEncontradas.length === 0" style="text-align: center; padding: 30px; background: #1a1a1a; border-radius: 10px; border: 1px solid #2c2c2c;">
+        <p style="color: #888; font-size: 0.9rem; margin: 0;">No se encontraron rutas con los criterios seleccionados.</p>
+      </div>
+
+      <div *ngFor="let ruta of rutasEncontradas" style="background: #1a1a1a; border: 1px solid #2c2c2c; border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <div>
+            <span style="background: #1976d2; color: white; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 6px;">
+              {{ ruta.nombre || 'Urbana' }}
+            </span>
+            <h4 style="margin: 6px 0 2px 0; color: #fff; font-size: 0.95rem; font-weight: 700;">
+              {{ ruta.origen }} ➔ {{ ruta.destino }}
+            </h4>
+          </div>
+          <span style="color: #4caf50; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 3px;">
+            <ion-icon name="time-outline"></ion-icon> {{ ruta.tiempo_estimado || '35 min' }}
+          </span>
+        </div>
+
+        <p style="color: #aaa; font-size: 0.75rem; margin: 0 0 12px 0;">
+          🚍 <strong>Empresa:</strong> {{ ruta.transporte?.empresa || 'MoviSoacha' }} | <strong>Tipo:</strong> {{ ruta.transporte?.tipo || 'Colectivo' }}
+        </p>
+
+        <!-- Botones de Acción -->
+        <div style="display: flex; gap: 8px;">
+          <ion-button expand="block" fill="outline" size="small" color="light" (click)="verDetallesRuta(ruta.id_ruta || ruta.id)" style="flex: 1; font-size: 0.75rem; --border-radius: 6px;">
+            Ver Detalles
+          </ion-button>
+          <ion-button expand="block" size="small" color="primary" (click)="iniciarNavegacion(ruta.id_ruta || ruta.id)" style="flex: 1; font-size: 0.75rem; --border-radius: 6px;">
+            Navegar <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+
+      </div>
     </div>
 
   </div>

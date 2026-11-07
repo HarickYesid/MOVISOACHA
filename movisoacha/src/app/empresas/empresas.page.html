@@ -1,0 +1,211 @@
+<ion-content [fullscreen]="true" class="admin-content">
+  <div class="layout-container">
+    
+    <!-- BARRA LATERAL (Sidebar con enlace activo en Empresas en rojo corporativo) -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <ion-icon name="bus-outline"></ion-icon>
+        </div>
+        <div class="logo-text">
+          <h2>Movi<span>Soacha</span></h2>
+          <p>Muévete mejor</p>
+        </div>
+      </div>
+
+      <nav class="menu-nav">
+        <button class="nav-btn" routerLink="/panel-admin">
+          <ion-icon name="home-outline"></ion-icon>
+          <span>Panel Principal</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/rutas">
+          <ion-icon name="map-outline"></ion-icon>
+          <span>Rutas</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/paradas">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>Paradas</span>
+        </button>
+
+        <!-- Botón activo en rojo -->
+        <button class="nav-btn active-rojo" routerLink="/empresas">
+          <ion-icon name="bus-outline"></ion-icon>
+          <span>Empresas</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/lista-usuarios">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Usuarios</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/reportes">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+          <span>Reportes</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/configuracion">
+          <ion-icon name="settings-outline"></ion-icon>
+          <span>Configuración</span>
+        </button>
+      </nav>
+
+      <div class="logout-container">
+        <button class="logout-btn" (click)="cerrarSesion()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-panel">
+      
+      <!-- Encabezado superior -->
+      <header class="top-header">
+        <div class="title-section">
+          <h1>Panel de Administrador</h1>
+          <p>Gestiona la información del sistema</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </button>
+          <ion-avatar class="user-avatar">
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </ion-avatar>
+        </div>
+      </header>
+
+      <!-- Tarjeta Principal de Gestión -->
+      <section class="gestion-card">
+        
+        <div class="gestion-header-top">
+          <div class="title-block">
+            <h2>Gestión de Empresas:</h2>
+            <h1>Lista Completa</h1>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Contador -->
+        <div class="contador-card">
+          <div class="numero">{{ transportesFiltrados.length }}</div>
+          <div class="etiqueta">Transportes / Empresas registradas</div>
+        </div>
+
+        <!-- Barra de Búsqueda -->
+        <div class="search-filter-container">
+          <div class="search-bar-wrapper">
+            <ion-icon name="search-outline"></ion-icon>
+            <input 
+              type="text" 
+              placeholder="Buscar por empresa o tipo de transporte..." 
+              [(ngModel)]="textoBusqueda" 
+              (input)="filtrarTransportes()" />
+          </div>
+          <button class="filter-btn">
+            <ion-icon name="options-outline"></ion-icon>
+          </button>
+        </div>
+
+        <!-- Mensaje de Carga -->
+        <div *ngIf="cargando" style="text-align: center; margin-top: 40px;">
+          <ion-spinner name="crescent" color="primary" style="width: 40px; height: 40px;"></ion-spinner>
+          <p style="color: #666; margin-top: 10px;">Cargando transportes desde la base de datos...</p>
+        </div>
+
+        <!-- Lista de Empresas y Despliegue de Detalles -->
+        <div class="lista-empresas" *ngIf="!cargando">
+          
+          <div class="empresa-card-wrapper" *ngFor="let t of transportesFiltrados">
+            
+            <!-- Cabecera de la Tarjeta (Visible a primera vista con el nombre de la empresa) -->
+            <div class="empresa-item-header" (click)="toggleExpandir(t)">
+              <div class="empresa-info-left">
+                <div class="bus-icon-box">
+                  <ion-icon name="bus-outline"></ion-icon>
+                </div>
+                <div>
+                  <h3>{{ t.empresa || 'Empresa No Especificada' }}</h3>
+                  <span class="sub-tipo">Tipo: {{ t.tipo || 'General' }} | Código: {{ t.id_transporte }}</span>
+                </div>
+              </div>
+              <ion-icon [name]="t.expandido ? 'chevron-down-outline' : 'arrow-forward-outline'" class="arrow-icon"></ion-icon>
+            </div>
+
+            <!-- Despliegue de toda la información y fotografías al hacer clic -->
+            <div class="empresa-detalles-desplegable" *ngIf="t.expandido">
+              
+              <div class="detalles-grid">
+                <div class="detalle-chip">
+                  <strong>Tipo:</strong> <span>{{ t.tipo || 'N/D' }}</span>
+                </div>
+                <div class="detalle-chip">
+                  <strong>Color:</strong> <span>{{ t.color || 'N/D' }}</span>
+                </div>
+                <div class="detalle-chip">
+                  <strong>Tamaño:</strong> <span>{{ t.tamano || 'N/D' }}</span>
+                </div>
+                <div class="detalle-chip">
+                  <strong>Empresa:</strong> <span>{{ t.empresa || 'N/D' }}</span>
+                </div>
+              </div>
+
+              <h4 class="galeria-titulo">Fotografías Registradas</h4>
+              <div class="galeria-fotos">
+                
+                <!-- Foto del Letrero -->
+                <div class="foto-box">
+                  <span class="foto-label">Letrero</span>
+                  <img [src]="t.letrero_url" alt="Letrero" *ngIf="t.letrero_url; else sinFoto">
+                </div>
+
+                <div class="foto-box">
+                  <span class="foto-label">Frente</span>
+                  <img [src]="t.frente_url" alt="Frente" *ngIf="t.frente_url; else sinFoto">
+                </div>
+
+                <div class="foto-box">
+                  <span class="foto-label">Atrás</span>
+                  <img [src]="t.atras_url" alt="Atrás" *ngIf="t.atras_url; else sinFoto">
+                </div>
+
+                <div class="foto-box">
+                  <span class="foto-label">Lado Derecho</span>
+                  <img [src]="t.ladoderecho_url" alt="Lado Derecho" *ngIf="t.ladoderecho_url; else sinFoto">
+                </div>
+
+                <div class="foto-box">
+                  <span class="foto-label">Lado Izquierdo</span>
+                  <img [src]="t.ladoizquierdo_url" alt="Lado Izquierdo" *ngIf="t.ladoizquierdo_url; else sinFoto">
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Estado vacío -->
+          <div class="empty-state" *ngIf="transportesFiltrados.length === 0">
+            <ion-icon name="bus-outline"></ion-icon>
+            <p>No se encontraron empresas o transportes registrados.</p>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+</ion-content>
+
+<!-- Template auxiliar para cuando no hay imagen -->
+<ng-template #sinFoto>
+  <div class="sin-imagen-placeholder">
+    <ion-icon name="image-outline"></ion-icon>
+    <span>Sin foto</span>
+  </div>
+</ng-template>

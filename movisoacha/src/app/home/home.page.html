@@ -1,6 +1,5 @@
-
 <ion-content [fullscreen]="true" class="acceso-content">
-  <div class="fondo"></div>
+  <div class="fondo" style="background-image: url('assets/icon/fondo.jpg');"></div>
 
   <main class="contenedor">
     <section class="marca">
@@ -15,76 +14,60 @@
     <section class="tarjeta">
       <div class="encabezado-formulario">
         <h2>
-          {{ modoRegistro ? 'Crea tu cuenta' : 'Bienvenido' }}
+          {{ modoRecuperacion ? 'Recuperar contraseña' : (modoRegistro ? 'Crea tu cuenta' : 'Bienvenido') }}
         </h2>
 
         <p>
           {{
-            modoRegistro
-              ? 'Regístrate para comenzar a explorar Soacha.'
-              : 'Ingresa para encontrar tu próxima ruta.'
+            modoRecuperacion
+              ? 'Ingresa tu correo y te enviaremos un enlace para restablecer tu clave.'
+              : (modoRegistro
+                  ? 'Regístrate para comenzar a explorar Soacha.'
+                  : 'Ingresa para encontrar tu próxima ruta.')
           }}
         </p>
       </div>
 
       <form (ngSubmit)="enviarFormulario()">
 
-        <ion-item
-          *ngIf="modoRegistro"
-          class="campo"
-          lines="none">
-          <ion-icon
-            name="person-outline"
-            slot="start">
-          </ion-icon>
-
+        <!-- Campo Nombre (Solo para Registro) -->
+        <ion-item *ngIf="modoRegistro && !modoRecuperacion" class="campo" lines="none">
+          <ion-icon name="person-outline" slot="start"></ion-icon>
           <ion-input
             label="Nombre"
             labelPlacement="stacked"
             type="text"
             name="nombre"
-            autocomplete="name"
             placeholder="Tu nombre"
             [(ngModel)]="nombre"
             required>
           </ion-input>
         </ion-item>
 
+        <!-- Campo Correo (Visible siempre) -->
         <ion-item class="campo" lines="none">
-          <ion-icon
-            name="mail-outline"
-            slot="start">
-          </ion-icon>
-
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
           <ion-input
             label="Correo electrónico"
             labelPlacement="stacked"
             type="email"
             name="correo"
-            autocomplete="email"
             placeholder="ejemplo@correo.com"
             [(ngModel)]="correo"
             required>
           </ion-input>
         </ion-item>
 
-        <ion-item class="campo" lines="none">
-          <ion-icon
-            name="lock-closed-outline"
-            slot="start">
-          </ion-icon>
-
+        <!-- Campo Contraseña (Se oculta en modo recuperación) -->
+        <ion-item *ngIf="!modoRecuperacion" class="campo" lines="none">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
           <ion-input
             label="Contraseña"
             labelPlacement="stacked"
             [type]="mostrarContrasena ? 'text' : 'password'"
             name="contrasena"
-            [autocomplete]="
-              modoRegistro ? 'new-password' : 'current-password'
-            "
             placeholder="Escribe tu contraseña"
             [(ngModel)]="contrasena"
-            [minlength]="8"
             required>
           </ion-input>
 
@@ -93,25 +76,19 @@
             fill="clear"
             color="medium"
             slot="end"
-            aria-label="Mostrar u ocultar contraseña"
             (click)="mostrarContrasena = !mostrarContrasena">
-            <ion-icon
-              [name]="
-                mostrarContrasena
-                  ? 'eye-off-outline'
-                  : 'eye-outline'
-              "
-              slot="icon-only">
-            </ion-icon>
+            <ion-icon [name]="mostrarContrasena ? 'eye-off-outline' : 'eye-outline'" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-item>
 
-        <p
-          class="ayuda-contrasena"
-          *ngIf="modoRegistro">
-          Usa una contraseña de al menos 8 caracteres.
-        </p>
+        <!-- Enlace de "¿Olvidaste tu contraseña?" (Solo visible en Login normal) -->
+        <div *ngIf="!modoRegistro && !modoRecuperacion" style="text-align: right; margin-bottom: 12px;">
+          <button type="button" (click)="alternarRecuperacion()" style="background: none; border: none; color: #90caf9; font-size: 0.8rem; cursor: pointer; padding: 0;">
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
 
+        <!-- Botón Principal -->
         <ion-button
           expand="block"
           type="submit"
@@ -120,19 +97,17 @@
           {{
             cargando
               ? 'Procesando...'
-              : (modoRegistro ? 'Crear cuenta' : 'Iniciar sesión')
+              : (modoRecuperacion ? 'Enviar enlace de recuperación' : (modoRegistro ? 'Crear cuenta' : 'Iniciar sesión'))
           }}
           <ion-icon
-            [name]="modoRegistro ? 'person-add-outline' : 'arrow-forward-outline'"
+            [name]="modoRecuperacion ? 'mail-unread-outline' : (modoRegistro ? 'person-add-outline' : 'arrow-forward-outline')"
             slot="end">
           </ion-icon>
         </ion-button>
       </form>
 
-      <p
-        class="mensaje"
-        *ngIf="mensaje"
-        [class.error]="esError">
+      <!-- Mensajes de feedback -->
+      <p class="mensaje" *ngIf="mensaje" [class.error]="esError">
         {{ mensaje }}
       </p>
 
@@ -140,17 +115,16 @@
         <span>o</span>
       </div>
 
+      <!-- Cambiar entre modos de Acceso / Registro / Recuperación -->
       <p class="cambiar-modo">
-        {{
-          modoRegistro
-            ? '¿Ya tienes una cuenta?'
-            : '¿Todavía no tienes una cuenta?'
-        }}
-        <button
-          type="button"
-          (click)="cambiarModo()">
-          {{ modoRegistro ? 'Inicia sesión' : 'Regístrate' }}
-        </button>
+        <span *ngIf="modoRecuperacion">
+          ¿Recordaste tu contraseña? 
+          <button type="button" (click)="alternarRecuperacion()">Inicia sesión</button>
+        </span>
+        <span *ngIf="!modoRecuperacion">
+          {{ modoRegistro ? '¿Ya tienes una cuenta?' : '¿Todavía no tienes una cuenta?' }}
+          <button type="button" (click)="cambiarModo()">{{ modoRegistro ? 'Inicia sesión' : 'Regístrate' }}</button>
+        </span>
       </p>
     </section>
 

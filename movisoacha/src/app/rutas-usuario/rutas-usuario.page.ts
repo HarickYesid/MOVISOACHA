@@ -1,21 +1,27 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { 
   IonContent, 
-  IonHeader, 
-  IonTitle, 
-  IonToolbar, 
-  IonButtons, 
-  IonBackButton, 
   IonSpinner, 
-  IonIcon,
-  IonButton,
-  IonFooter
+  IonIcon
 } from '@ionic/angular';
 import { AdminRutasService } from '../services/admin-rutas.service';
 import { addIcons } from 'ionicons';
-import { navigateCircleOutline, mapOutline, starOutline, personOutline, home } from 'ionicons/icons';
+import { 
+  navigateCircleOutline, 
+  mapOutline, 
+  map, 
+  starOutline, 
+  star, 
+  personOutline, 
+  homeOutline, 
+  busOutline, 
+  logOutOutline, 
+  personCircleOutline, 
+  searchOutline 
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-rutas-usuario',
@@ -24,30 +30,38 @@ import { navigateCircleOutline, mapOutline, starOutline, personOutline, home } f
   standalone: true,
   imports: [
     CommonModule, 
+    FormsModule,
     RouterLink, 
     IonContent, 
-    IonHeader, 
-    IonTitle, 
-    IonToolbar, 
-    IonButtons, 
-    IonBackButton, 
     IonSpinner, 
-    IonIcon,
-    IonButton,
-    IonFooter
+    IonIcon
   ]
 })
 export class RutasUsuarioPage implements OnInit {
   rutas: any[] = [];
+  rutasOriginales: any[] = [];
   cargando = false;
   favoritos: number[] = [];
+  terminoBusqueda: string = '';
 
   constructor(
     private adminRutasService: AdminRutasService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
-    addIcons({ navigateCircleOutline, mapOutline, home, personOutline, starOutline });
+    addIcons({ 
+      navigateCircleOutline, 
+      mapOutline, 
+      map, 
+      starOutline, 
+      star, 
+      personOutline, 
+      homeOutline, 
+      busOutline, 
+      logOutOutline, 
+      personCircleOutline, 
+      searchOutline 
+    });
   }
 
   async ngOnInit() {
@@ -61,21 +75,46 @@ export class RutasUsuarioPage implements OnInit {
 
   async cargarDatosCompletos() {
     this.cargando = true;
-    // 1. Cargamos los favoritos del localStorage primero
     this.cargarFavoritos();
     
     try {
-      // 2. Luego cargamos las rutas de la base de datos
-      this.rutas = await this.adminRutasService.obtenerRutas();
+      const data = await this.adminRutasService.obtenerRutas();
+      this.rutasOriginales = data || [];
+      this.rutas = [...this.rutasOriginales];
+      
+      // Aplicar filtro si el usuario ya tenía un término escrito
+      if (this.terminoBusqueda.trim()) {
+        this.filtrarRutas();
+      }
     } catch (error) {
       console.error('Error al cargar rutas:', error);
     } finally {
       this.cargando = false;
-      // 3. Forzamos a Angular a actualizar la vista con los estados correctos de las estrellas
       this.cdr.detectChanges();
     }
   }
 
+  async cargarRutas() {
+    await this.cargarDatosCompletos();
+  }
+
+  // Filtrado de rutas según lo escrito en la barra de búsqueda del panel
+  filtrarRutas(event?: any) {
+    const valor = this.terminoBusqueda.toLowerCase().trim();
+    if (!valor) {
+      this.rutas = [...this.rutasOriginales];
+    } else {
+      this.rutas = this.rutasOriginales.filter((r: any) => {
+        const nombre = r.nombre ? r.nombre.toLowerCase() : '';
+        const origen = r.origen ? r.origen.toLowerCase() : '';
+        const destino = r.destino ? r.destino.toLowerCase() : '';
+        return nombre.includes(valor) || origen.includes(valor) || destino.includes(valor);
+      });
+    }
+    this.cdr.detectChanges();
+  }
+
+  // Gestión de Favoritos en LocalStorage
   cargarFavoritos() {
     const favs = localStorage.getItem('rutas_favoritas');
     this.favoritos = favs ? JSON.parse(favs) : [];
@@ -86,30 +125,21 @@ export class RutasUsuarioPage implements OnInit {
   }
 
   toggleFavorito(r: any, event: Event) {
-    event.stopPropagation(); // Evita que se abra el detalle al hacer clic en la estrella
-    const index = this.favoritos.indexOf(r.id_ruta);
+    event.stopPropagation(); // Evita navegar al detalle al pulsar la estrella
+    const id = r.id_ruta || r.id;
+    const index = this.favoritos.indexOf(id);
+    
     if (index > -1) {
-      this.favoritos.splice(index, 1); // Quitar de favoritos
+      this.favoritos.splice(index, 1);
     } else {
-      this.favoritos.push(r.id_ruta); // Agregar a favoritos
+      this.favoritos.push(id);
     }
+    
     localStorage.setItem('rutas_favoritas', JSON.stringify(this.favoritos));
     this.cdr.detectChanges();
   }
 
-  async cargarRutas() {
-    this.cargando = true;
-    try {
-      this.rutas = await this.adminRutasService.obtenerRutas();
-    } catch (error) {
-      console.error('Error al cargar rutas:', error);
-    } finally {
-      this.cargando = false;
-      this.cdr.detectChanges();
-    }
-  }
-
   verDetalleRuta(r: any) {
-    this.router.navigate(['/detalle-ruta'], { queryParams: { id: r.id_ruta } });
+    this.router.navigate(['/detalle-ruta'], { queryParams: { id: r.id_ruta || r.id } });
   }
 }

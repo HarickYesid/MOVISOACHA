@@ -1,0 +1,11 @@
+/* Color de fondo detrás del formulario */
+ion-content {
+  --background: #90a0ff; /* El color que quieras para la parte de atrás */
+}
+
+/* Opcional: si quieres que el contenedor del formulario resalte sobre ese fondo */
+.formulario-container, div[style*="max-width"] {
+  background: #ffffff; /* O #1e1e1e si es modo oscuro */
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}

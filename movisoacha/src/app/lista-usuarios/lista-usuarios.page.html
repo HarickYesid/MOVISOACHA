@@ -1,0 +1,161 @@
+<ion-content [fullscreen]="true" class="admin-content">
+  <div class="layout-container">
+    
+    <!-- BARRA LATERAL (Sidebar con enlace activo en Usuarios en color rojo corporativo) -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <ion-icon name="bus-outline"></ion-icon>
+        </div>
+        <div class="logo-text">
+          <h2>Movi<span>Soacha</span></h2>
+          <p>Muévete mejor</p>
+        </div>
+      </div>
+
+      <nav class="menu-nav">
+        <button class="nav-btn" routerLink="/panel-admin">
+          <ion-icon name="home-outline"></ion-icon>
+          <span>Panel Principal</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/rutas">
+          <ion-icon name="map-outline"></ion-icon>
+          <span>Rutas</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/paradas">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>Paradas</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/empresas">
+          <ion-icon name="bus-outline"></ion-icon>
+          <span>Empresas</span>
+        </button>
+
+        <!-- Botón activo en rojo -->
+        <button class="nav-btn active-rojo" routerLink="/lista-usuarios">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Usuarios</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/reportes">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+          <span>Reportes</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/configuracion">
+          <ion-icon name="settings-outline"></ion-icon>
+          <span>Configuración</span>
+        </button>
+      </nav>
+
+      <div class="logout-container">
+        <button class="logout-btn" (click)="cerrarSesion()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-panel">
+      
+      <!-- Encabezado superior -->
+      <header class="top-header">
+        <div class="title-section">
+          <h1>Panel de Administrador</h1>
+          <p>Gestiona la información del sistema</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </button>
+          <ion-avatar class="user-avatar">
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </ion-avatar>
+        </div>
+      </header>
+
+      <!-- Tarjeta Principal de Gestión -->
+      <section class="gestion-card">
+        
+        <div class="gestion-header-top">
+          <div class="title-block">
+            <h2>Gestión de Usuarios:</h2>
+            <h1>Lista Completa</h1>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Contador -->
+        <div class="contador-card">
+          <div class="numero">{{ usuariosFiltrados.length }}</div>
+          <div class="etiqueta">Usuarios registrados</div>
+        </div>
+
+        <!-- Barra de Búsqueda -->
+        <div class="search-filter-container">
+          <div class="search-bar-wrapper">
+            <ion-icon name="search-outline"></ion-icon>
+            <input 
+              type="text" 
+              placeholder="Buscar por nombre o correo..." 
+              [(ngModel)]="textoBusqueda" 
+              (input)="filtrarUsuarios()" />
+          </div>
+          <button class="filter-btn">
+            <ion-icon name="options-outline"></ion-icon>
+          </button>
+        </div>
+
+        <!-- Mensaje de Carga -->
+        <div *ngIf="cargando" style="text-align: center; margin-top: 40px;">
+          <ion-spinner name="crescent" color="primary" style="width: 40px; height: 40px;"></ion-spinner>
+          <p style="color: #666; margin-top: 10px;">Cargando usuarios desde la base de datos...</p>
+        </div>
+
+        <!-- Tabla de Usuarios Registrados -->
+        <div class="table-container" *ngIf="!cargando">
+          <table class="access-table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Correo electrónico</th>
+                <th>Acción</th>
+                <th>Último acceso</th>
+                <th>Rol</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of usuariosFiltrados">
+                <td class="user-cell">
+                  <ion-icon name="person-circle-outline"></ion-icon>
+                  <span>{{ u.nombre || 'Sin nombre' }}</span>
+                </td>
+                <td class="email-cell">{{ u.correo || u.email || 'No registrado' }}</td>
+                <td class="action-cell"><span class="badge-accion">Inició sesión</span></td>
+                <td class="date-cell">{{ formatearFecha(u.ultimo_acceso) }}</td>
+                <td class="role-cell">
+                  <span [class]="'badge-rol ' + (u.rol === 'admin' ? 'rol-admin' : 'rol-usuario')">
+                    {{ u.rol || 'usuario' }}
+                  </span>
+                </td>
+              </tr>
+
+              <!-- Estado vacío -->
+              <tr *ngIf="usuariosFiltrados.length === 0">
+                <td colspan="5" style="text-align: center; color: #78909c; padding: 30px;">
+                  No se encontraron usuarios registrados.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+</ion-content>

@@ -35,11 +35,24 @@ export class AdminRutasService {
         const camposImagenes = ['letrero_url', 'frente_url', 'atras_url', 'ladoderecho_url', 'ladoizquierdo_url'];
         
         camposImagenes.forEach(campo => {
-          if (transporteObj[campo] && !transporteObj[campo].startsWith('http')) {
-            const { data: publicUrlData } = this.supabase.storage
-              .from('buses-imagenes')
-              .getPublicUrl(transporteObj[campo]);
-            transporteObj[campo] = publicUrlData.publicUrl;
+          let rutaImagen = transporteObj[campo];
+          if (rutaImagen) {
+            // Si por alguna razón antigua la ruta incluye 'transporte/', lo limpiamos
+            if (rutaImagen.includes('/transporte/')) {
+              rutaImagen = rutaImagen.replace('/transporte/', '/');
+            } else if (rutaImagen.startsWith('transporte/')) {
+              rutaImagen = rutaImagen.replace('transporte/', '');
+            }
+
+            // Si es una ruta relativa, obtenemos su URL pública limpia de la raíz
+            if (!rutaImagen.startsWith('http')) {
+              const { data: publicUrlData } = this.supabase.storage
+                .from('buses-imagenes')
+                .getPublicUrl(rutaImagen);
+              transporteObj[campo] = publicUrlData.publicUrl;
+            } else {
+              transporteObj[campo] = rutaImagen;
+            }
           }
         });
       }
@@ -73,14 +86,26 @@ export class AdminRutasService {
     return data;
   }
 
-  async subirImagenBucket(file: any): Promise<string> {
-    const fileName = `transporte/${Date.now()}_${file.name}`;
+  async subirImagenBucket(file: any, tipoImagen: string): Promise<string> {
+    // CORREGIDO: Guardar directamente en la raíz del bucket con un nombre único limpio
+    const extension = file.name ? file.name.split('.').pop() : 'jpg';
+    const fileName = `${tipoImagen}_${Date.now()}.${extension}`;
+    
     const { error: uploadError } = await this.supabase.storage
       .from('buses-imagenes')
-      .upload(fileName, file);
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
 
     if (uploadError) throw uploadError;
-    return fileName;
+    
+    // Retornamos directamente la URL pública generada para asegurarnos de que se guarde limpia
+    const { data: publicUrlData } = this.supabase.storage
+      .from('buses-imagenes')
+      .getPublicUrl(fileName);
+
+    return publicUrlData.publicUrl;
   }
 
   async eliminarRuta(id_ruta: number) {
@@ -93,7 +118,7 @@ export class AdminRutasService {
 
     for (const tipo of tiposImagenes) {
       if (archivosImagenes[tipo]) {
-        datosTransporte[tipo] = await this.subirImagenBucket(archivosImagenes[tipo]);
+        datosTransporte[tipo] = await this.subirImagenBucket(archivosImagenes[tipo], tipo);
       }
     }
 
@@ -134,7 +159,7 @@ export class AdminRutasService {
 
     for (const tipo of tiposImagenes) {
       if (archivosImagenes[tipo]) {
-        datosTransporte[tipo] = await this.subirImagenBucket(archivosImagenes[tipo]);
+        datosTransporte[tipo] = await this.subirImagenBucket(archivosImagenes[tipo], tipo);
       }
     }
 

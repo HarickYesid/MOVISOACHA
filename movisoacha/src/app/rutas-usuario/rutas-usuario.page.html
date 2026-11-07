@@ -1,106 +1,163 @@
-<ion-header>
-  <ion-toolbar style="--background: #1976d2; color: white;">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/usuario"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Rutas Disponibles</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" style="--background: #f4f6f9;">
 
-<ion-content class="ion-padding" style="background: #121212; color: white;">
+  <div style="display: flex; height: 100vh; width: 100vw; overflow: hidden; background: #d8d6d6;">
 
-  <div style="max-width: 800px; margin: 10px auto; padding: 0 10px;">
-
-    <!-- Mensaje de Carga -->
-    <div *ngIf="cargando" style="text-align: center; margin-top: 60px;">
-      <ion-spinner name="crescent" color="primary" style="width: 40px; height: 40px;"></ion-spinner>
-      <p style="color: #aaa; margin-top: 10px;">Cargando rutas...</p>
-    </div>
-
-    <!-- Mensaje sin registros -->
-    <div *ngIf="!cargando && rutas.length === 0" style="text-align: center; margin-top: 60px; background: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px dashed #444;">
-      <ion-icon name="map-outline" style="font-size: 48px; color: #666; margin-bottom: 10px;"></ion-icon>
-      <p style="color: #ccc; font-size: 1.1rem; margin: 0;">No hay rutas disponibles en este momento.</p>
-    </div>
-
-    <!-- Lista de Rutas -->
-    <div *ngIf="!cargando && rutas.length > 0">
-      <div *ngFor="let r of rutas" 
-           (click)="verDetalleRuta(r)"
-           style="background: linear-gradient(145deg, #1e1e1e, #181818); padding: 20px; margin-bottom: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px; border: 1px solid #2c2c2c; box-shadow: 0 4px 12px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
-           onmouseover="this.style.borderColor='#1976d2'; this.style.transform='translateY(-2px)';" 
-           onmouseout="this.style.borderColor='#2c2c2c'; this.style.transform='translateY(0)';">
-        
-        <!-- Columna Izquierda: Información de la Ruta -->
-        <div style="flex: 1;">
-          
-          <!-- Título y Botón de Favorito -->
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h2 style="margin: 0; color: #ffffff; font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-              <ion-icon name="navigate-circle-outline" color="primary" style="font-size: 1.3rem;"></ion-icon>
-              {{ r.nombre }}
-            </h2>
-            
-            <!-- Botón de Favorito -->
-            <ion-button fill="clear" size="small" (click)="toggleFavorito(r, $event)" style="margin: 0; --padding-start: 4px; --padding-end: 4px;">
-              <ion-icon [name]="esFavorito(r.id_ruta) ? 'star' : 'star-outline'" 
-                        [color]="esFavorito(r.id_ruta) ? 'warning' : 'medium'" 
-                        style="font-size: 1.4rem;">
-              </ion-icon>
-            </ion-button>
-          </div>
-          
-          <div style="background: rgba(255, 255, 255, 0.03); padding: 12px; border-radius: 8px; border-left: 3px solid #1976d2;">
-            <p style="margin: 0 0 6px 0; color: #ddd; font-size: 0.95rem;">
-              <strong>Origen:</strong> {{ r.origen }}
-            </p>
-            <p style="margin: 0 0 6px 0; color: #ddd; font-size: 0.95rem;">
-              <strong>Destino:</strong> {{ r.destino }}
-            </p>
-            <p *ngIf="r.tiempo_estimado" style="margin: 0; color: #aaa; font-size: 0.9rem;">
-              <strong>Tiempo estimado:</strong> {{ r.tiempo_estimado }}
-            </p>
-          </div>
+    <!-- MENÚ LATERAL IZQUIERDO -->
+    <div style="width: 260px; background: #1976d2; color: white; display: flex; flex-direction: column; justify-content: space-between; padding: 24px 16px; box-shadow: 4px 0 15px rgba(0,0,0,0.1); flex-shrink: 0; z-index: 10;">
+      
+      <div>
+        <!-- Logo y Título -->
+        <div style="text-align: center; margin-bottom: 35px; padding-top: 10px;">
+          <ion-icon name="bus-outline" style="font-size: 42px; margin-bottom: 6px; display: block; margin-left: auto; margin-right: auto;"></ion-icon>
+          <h2 style="margin: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px;">MoviSoacha</h2>
+          <p style="margin: 4px 0 0 0; font-size: 0.75rem; color: rgba(255,255,255,0.8);">Mueve mejor si administrador</p>
         </div>
 
-        <!-- Columna Derecha: Imagen del letrero -->
-        <div *ngIf="r.transporte && r.transporte.letrero_url" style="flex-shrink: 0; text-align: center;">
-          <div style="background: #111; padding: 4px; border-radius: 10px; border: 1px solid #333; box-shadow: 0 2px 8px rgba(0,0,0,0.5);">
-            <img [src]="r.transporte.letrero_url" alt="Letrero" style="width: 90px; height: 90px; object-fit: cover; border-radius: 8px; display: block;">
+        <!-- Opciones de Navegación del Menú -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          
+          <!-- Inicio -->
+          <div routerLink="/usuario" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 8px; cursor: pointer; color: rgba(255,255,255,0.9); transition: background 0.2s;">
+            <ion-icon name="home-outline" style="font-size: 20px;"></ion-icon>
+            <span style="font-size: 0.95rem; font-weight: 500;">Inicio</span>
           </div>
-          <span style="font-size: 0.7rem; color: #888; margin-top: 4px; display: block;">Letrero</span>
+
+          <!-- Ruta (Activo) -->
+          <div routerLink="/rutas-usuario" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 8px; cursor: pointer; background: rgba(255, 255, 255, 0.2); color: white; font-weight: 600; box-shadow: inset 3px 0 0 white;">
+            <ion-icon name="map" style="font-size: 20px; color: #ffeb3b;"></ion-icon>
+            <span style="font-size: 0.95rem;">Ruta</span>
+          </div>
+
+          <!-- Favoritos -->
+          <div routerLink="/favoritos" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 8px; cursor: pointer; color: rgba(255,255,255,0.9); transition: background 0.2s;">
+            <ion-icon name="star-outline" style="font-size: 20px;"></ion-icon>
+            <span style="font-size: 0.95rem; font-weight: 500;">Favoritos</span>
+          </div>
+
+          <!-- Perfil (Sin ruta aún) -->
+          <div style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 8px; cursor: default; color: rgba(255,255,255,0.9);">
+            <ion-icon name="person-outline" style="font-size: 20px;"></ion-icon>
+            <span style="font-size: 0.95rem; font-weight: 500;">Perfil</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Cerrar Sesión inferior -->
+      <div routerLink="/panel-admin" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; cursor: pointer; color: rgba(255,255,255,0.9); border-top: 1px solid rgba(255,255,255,0.15); margin-top: auto;">
+        <ion-icon name="log-out-outline" style="font-size: 20px;"></ion-icon>
+        <span style="font-size: 0.95rem; font-weight: 500;">Cerrar sesión</span>
+      </div>
+
+    </div>
+
+
+    <!-- CONTENIDO PRINCIPAL DE LA PÁGINA -->
+    <div style="flex: 1; display: flex; flex-direction: column; overflow-y: auto; height: 100%;">
+
+      <!-- Barra superior simulada -->
+      <div style="background: white; padding: 16px 30px; border-bottom: 1px solid #c40d0d; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        <h1 style="margin: 0; font-size: 1.3rem; color: #333; font-weight: 700;">Rutas Disponibles</h1>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <ion-icon name="person-circle-outline" style="font-size: 32px; color: #555;"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Contenedor central -->
+      <div style="padding: 30px; max-width: 900px; width: 100%; margin: 0 auto; box-sizing: border-box;">
+
+        <!-- Tarjeta de Resumen y Barra de Búsqueda -->
+        <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #c40d0d; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <h3 style="margin: 0; color: #1f2937; font-size: 1.1rem; font-weight: 700;">
+              Total de Rutas: <span style="color: #1976d2;">{{ rutas.length }}</span>
+            </h3>
+          </div>
+
+          <!-- Pequeña Barra de Búsqueda en panel -->
+          <div style="position: relative; display: flex; align-items: center;">
+            <ion-icon name="search-outline" style="position: absolute; left: 14px; font-size: 18px; color: #888;"></ion-icon>
+            <input type="text" 
+                   [(ngModel)]="terminoBusqueda" 
+                   (input)="filtrarRutas($event)" 
+                   placeholder="Buscar en rutas..." 
+                   style="width: 100%; background: #f8fafc; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px 10px 10px 42px; font-size: 0.9rem; color: #333; outline: none;" />
+          </div>
+
+        </div>
+
+        <!-- Mensaje de Carga -->
+        <div *ngIf="cargando" style="text-align: center; margin-top: 40px;">
+          <ion-spinner name="crescent" color="primary" style="width: 40px; height: 40px;"></ion-spinner>
+          <p style="color: #666; margin-top: 10px;">Cargando rutas...</p>
+        </div>
+
+        <!-- Mensaje sin registros -->
+        <div *ngIf="!cargando && rutas.length === 0" style="text-align: center; margin-top: 40px; background: white; padding: 40px 20px; border-radius: 12px; border: 1px dashed #ccc; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+          <ion-icon name="map-outline" style="font-size: 48px; color: #888; margin-bottom: 10px;"></ion-icon>
+          <p style="color: #666; font-size: 1.1rem; margin: 0;">No hay rutas disponibles en este momento.</p>
+        </div>
+
+        <!-- Lista de Rutas -->
+        <div *ngIf="!cargando && rutas.length > 0">
+          <div *ngFor="let r of rutas" 
+               style="background: white; padding: 18px 22px; margin-bottom: 16px; border-radius: 12px; border: 1px solid #c40d0d; box-shadow: 0 4px 12px rgba(0,0,0,0.04); position: relative; transition: transform 0.2s;">
+            
+            <!-- Encabezado de la Tarjeta: Título y Favorito -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h2 (click)="verDetalleRuta(r)" style="margin: 0; color: #1f2937; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <ion-icon name="navigate-circle-outline" style="color: #1976d2; font-size: 1.3rem;"></ion-icon>
+                {{ r.nombre }}
+              </h2>
+              
+              <!-- Botón de Favorito -->
+              <button type="button" 
+                      (click)="toggleFavorito(r, $event)" 
+                      title="Marcar como favorito"
+                      style="background: transparent; border: none; outline: none; cursor: pointer; padding: 4px 8px; display: flex; align-items: center; justify-content: center;">
+                <ion-icon [name]="esFavorito(r.id_ruta) ? 'star' : 'star-outline'" 
+                          [style.color]="esFavorito(r.id_ruta) ? '#f2c94c' : '#9ca3af'" 
+                          style="font-size: 1.6rem;">
+                </ion-icon>
+              </button>
+            </div>
+
+            <!-- Contenido Clicable para ver el detalle -->
+            <div (click)="verDetalleRuta(r)" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; cursor: pointer;">
+              
+              <!-- Información de Origen y Destino -->
+              <div style="flex: 1;">
+                <div style="background: #ee1e1e3d; padding: 12px 16px; border-radius: 8px; border-left: 4px solid #1976d2;">
+                  <p style="margin: 0 0 6px 0; color: #334155; font-size: 0.95rem;">
+                    <strong>Origen:</strong> {{ r.origen }}
+                  </p>
+                  <p style="margin: 0 0 6px 0; color: #334155; font-size: 0.95rem;">
+                    <strong>Destino:</strong> {{ r.destino }}
+                  </p>
+                  <p *ngIf="r.tiempo_estimado" style="margin: 0; color: #64748b; font-size: 0.9rem;">
+                    <strong>Tiempo estimado:</strong> {{ r.tiempo_estimado }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Imagen del Letrero -->
+              <div *ngIf="r.transporte && r.transporte.letrero_url" style="flex-shrink: 0; text-align: center;">
+                <div style="background: #000; padding: 3px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                  <img [src]="r.transporte.letrero_url" alt="Letrero" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px; display: block;">
+                </div>
+                <span style="font-size: 0.65rem; color: #666; margin-top: 3px; display: block; font-weight: 600;">Letrero</span>
+              </div>
+
+            </div>
+
+          </div>
         </div>
 
       </div>
+
     </div>
 
   </div>
 
 </ion-content>
-
-<!-- Barra Inferior de Navegación (Tabs) -->
-<ion-footer class="ion-no-border" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: transparent;">
-  <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px 20px 0 0; display: flex; justify-content: space-around; align-items: center; padding: 8px 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.15); border-top: 1px solid rgba(0,0,0,0.05);">
-    
-    <div routerLink="/usuario" style="text-align: center; color: #2c3faa; cursor: pointer; flex: 1;">
-      <ion-icon name="home" style="font-size: 22px; display: block; margin: 0 auto;"></ion-icon>
-      <span style="font-size: 0.75rem; font-weight: 600;">Inicio</span>
-    </div>
-
-    <div routerLink="/rutas-usuario" style="text-align: center; color: #2c3faa; cursor: pointer; flex: 1;">
-      <ion-icon name="map-outline" style="font-size: 22px; display: block; margin: 0 auto;"></ion-icon>
-      <span style="font-size: 0.75rem; font-weight: 500;">Rutas</span>
-    </div>
-
-    <div routerLink="/favoritos" style="text-align: center; color: #757575; cursor: pointer; flex: 1;">
-      <ion-icon name="star-outline" style="font-size: 22px; display: block; margin: 0 auto;"></ion-icon>
-      <span style="font-size: 0.75rem; font-weight: 500;">Favoritos</span>
-    </div>
-
-    <div style="text-align: center; color: #2c3faa; cursor: pointer; flex: 1;">
-      <ion-icon name="person-outline" style="font-size: 22px; display: block; margin: 0 auto;"></ion-icon>
-      <span style="font-size: 0.75rem; font-weight: 500;">Perfil</span>
-    </div>
-
-  </div>
-</ion-footer>

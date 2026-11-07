@@ -1,0 +1,199 @@
+<ion-content [fullscreen]="true" class="admin-content">
+  <div class="layout-container">
+    
+    <!-- 1. BARRA LATERAL IZQUIERDA (Sidebar) -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <ion-icon name="bus-outline"></ion-icon>
+        </div>
+        <div class="logo-text">
+          <h2>Movi<span>Soacha</span></h2>
+          <p>Muévete mejor</p>
+        </div>
+      </div>
+
+      <nav class="menu-nav">
+        <button class="nav-btn active" routerLink="/panel-admin">
+          <ion-icon name="home-outline"></ion-icon>
+          <span>Panel Principal</span>
+        </button>
+
+        <!-- Redirección a /rutas -->
+        <button class="nav-btn" routerLink="/rutas">
+          <ion-icon name="map-outline"></ion-icon>
+          <span>Rutas</span>
+        </button>
+
+        <!-- Redirección a /paradas -->
+        <button class="nav-btn" routerLink="/paradas">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>Paradas</span>
+        </button>
+
+        <!-- Redirección a /empresas -->
+        <button class="nav-btn" routerLink="/empresas">
+          <ion-icon name="bus-outline"></ion-icon>
+          <span>Empresas</span>
+        </button>
+
+        <!-- Redirección a /lista-usuarios -->
+        <button class="nav-btn" routerLink="/lista-usuarios">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Usuarios</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/reportes">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+          <span>Reportes</span>
+        </button>
+
+        <button class="nav-btn" routerLink="/configuracion">
+          <ion-icon name="settings-outline"></ion-icon>
+          <span>Configuración</span>
+        </button>
+      </nav>
+
+      <div class="logout-container">
+        <button class="logout-btn" (click)="cerrarSesion()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- 2. CONTENIDO PRINCIPAL -->
+    <main class="main-panel">
+      
+      <!-- Encabezado superior -->
+      <header class="top-header">
+        <div class="title-section">
+          <h1>Panel de Administrador</h1>
+          <p>Gestiona la información del sistema</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </button>
+
+          <ion-avatar class="user-avatar">
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </ion-avatar>
+        </div>
+      </header>
+
+      <!-- Banner de bienvenida -->
+      <section class="banner-welcome">
+        <div class="banner-text">
+          <h3>👋 ¡Hola, Admin!</h3>
+          <p>Aquí tienes un resumen del sistema.</p>
+        </div>
+        <div class="banner-icon">
+          <ion-icon name="bus-outline"></ion-icon>
+        </div>
+      </section>
+
+      <!-- Grid de tarjetas estadísticas con redirecciones -->
+      <section class="stats-grid">
+        
+        <!-- Tarjeta 1: Rutas registradas -> /rutas -->
+        <div class="stat-card" routerLink="/rutas">
+          <div class="stat-icon-wrapper circle-icon">
+            <ion-icon name="git-commit-outline"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ totalRutas }}</span>
+            <span class="stat-label">Rutas registradas</span>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+        </div>
+
+        <!-- Tarjeta 2: Paradas activas -> /paradas -->
+        <div class="stat-card" routerLink="/paradas">
+          <div class="stat-icon-wrapper border-icon">
+            <ion-icon name="location-outline"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ totalParadas }}</span>
+            <span class="stat-label">Paradas activas</span>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+        </div>
+
+        <!-- Tarjeta 3: Empresas aliadas -> /empresas -->
+        <div class="stat-card" routerLink="/empresas">
+          <div class="stat-icon-wrapper sun-icon">
+            <ion-icon name="business-outline"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ totalEmpresas }}</span>
+            <span class="stat-label">Empresas aliadas</span>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+        </div>
+
+        <!-- Tarjeta 4: Usuarios registrados -> /lista-usuarios -->
+        <div class="stat-card" routerLink="/lista-usuarios">
+          <div class="stat-icon-wrapper group-icon">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ totalUsuarios }}</span>
+            <span class="stat-label">Usuarios registrados</span>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+        </div>
+
+      </section>
+
+      <!-- Tabla / Lista de Accesos Recientes (Máximo 5 registros) -->
+      <section class="recent-access-card">
+        <div class="card-header">
+          <h3>
+            <ion-icon name="bar-chart-outline"></ion-icon>
+            Accesos recientes
+          </h3>
+          <button class="ver-mas-btn" routerLink="/lista-usuarios">Ver más &rarr;</button>
+        </div>
+
+        <div class="table-container">
+          <table class="access-table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Acción</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of accesosRecientes">
+                <td class="user-cell">
+                  <ion-icon name="person-circle-outline"></ion-icon>
+                  <span>{{ item.nombre || 'usuario' }}</span>
+                </td>
+                <td class="action-cell">Inició sesión</td>
+                <td class="date-cell">{{ formatearFecha(item.ultimo_acceso) }}</td>
+              </tr>
+
+              <tr *ngIf="accesosRecientes.length === 0">
+                <td colspan="3" style="text-align: center; color: #888; padding: 16px;">
+                  Cargando o no hay inicios de sesión recientes...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Botón de acción principal: Crear nueva ruta -> /admin -->
+      <section class="action-section">
+        <button class="create-route-btn" routerLink="/admin">
+          <ion-icon name="add-outline"></ion-icon>
+          <span>Crear nueva ruta</span>
+        </button>
+      </section>
+
+    </main>
+
+  </div>
+</ion-content>

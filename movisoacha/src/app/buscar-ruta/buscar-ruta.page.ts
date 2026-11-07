@@ -1,20 +1,21 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { 
   IonContent, 
   IonHeader, 
   IonTitle, 
   IonToolbar, 
-  IonButtons, 
-  IonBackButton, 
+  IonButtons,
+  IonBackButton,
   IonButton, 
-  IonIcon 
+  IonIcon, 
+  IonSpinner 
 } from '@ionic/angular';
-import { AdminRutasService } from '../services/admin-rutas.service';
 import { addIcons } from 'ionicons';
-import { location, locateOutline } from 'ionicons/icons';
+import { locationOutline, timeOutline, busOutline, searchOutline, arrowForwardOutline } from 'ionicons/icons';
+import { AdminRutasService } from '../services/admin-rutas.service';
 
 @Component({
   selector: 'app-buscar-ruta',
@@ -22,102 +23,128 @@ import { location, locateOutline } from 'ionicons/icons';
   styleUrls: ['./buscar-ruta.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    IonContent, 
-    IonHeader, 
-    IonTitle, 
-    IonToolbar, 
-    IonButtons, 
-    IonBackButton, 
-    IonButton, 
+    CommonModule,
+    FormsModule,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonButton,
     IonIcon,
-    RouterLink
+    IonSpinner
   ]
 })
 export class BuscarRutaPage implements OnInit {
-  origenBusqueda: string = '';
+  rutas: any[] = [];
+  rutasFiltradas: any[] = [];
+  
+  puntoPartida: string = '';
   destinoBusqueda: string = '';
-  todasLasRutas: any[] = [];
-  resultados: any[] = [];
-  busquedaRealizada: boolean = false;
+  terminoBusqueda: string = '';
+  cargando = true;
+
+  // Lista de sugerencias para el autocompletado de destino
+  destinosSugeridos: string[] = [];
+
+  get rutasEncontradas() {
+    return this.rutasFiltradas;
+  }
+  set rutasEncontradas(value: any[]) {
+    this.rutasFiltradas = value;
+  }
 
   constructor(
     private adminRutasService: AdminRutasService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
-    addIcons({ location, locateOutline });
+    addIcons({ locationOutline, timeOutline, busOutline, searchOutline, arrowForwardOutline });
   }
 
   async ngOnInit() {
+    await this.cargarRutas();
+  }
+
+  async ionViewWillEnter() {
+    await this.cargarRutas();
+  }
+
+  async cargarRutas() {
+    this.cargando = true;
     try {
-      this.todasLasRutas = await this.adminRutasService.obtenerRutas();
+      this.rutas = await this.adminRutasService.obtenerRutas();
+      this.rutasFiltradas = [...this.rutas];
     } catch (error) {
-      console.error('Error al cargar rutas:', error);
+      console.error('Error al cargar las rutas:', error);
+    } finally {
+      this.cargando = false;
+      this.cdr.detectChanges();
     }
   }
 
-  usarMiUbicacion() {
+  // Método de autocompletado en tiempo real para el destino
+  onDestinoInput() {
+    const valor = this.destinoBusqueda.toLowerCase().trim();
+    if (!valor) {
+      this.destinosSugeridos = [];
+      return;
+    }
+
+    // Extraer todos los destinos únicos disponibles en las rutas
+    const todosLosDestinos = this.rutas
+      .map(r => r.destino)
+      .filter((dest, index, self) => dest && self.indexOf(dest) === index);
+
+    // Filtrar los que coincidan con lo que escribe el usuario
+    this.destinosSugeridos = todosLosDestinos.filter(dest => 
+      dest.toLowerCase().includes(valor)
+    );
+  }
+
+  // Seleccionar una sugerencia del autocompletado
+  seleccionarDestino(destino: string) {
+    this.destinoBusqueda = destino;
+    this.destinosSugeridos = [];
+    this.buscarRutas();
+  }
+
+  // Búsqueda avanzada por origen y destino
+  buscarRutas() {
+    this.destinosSugeridos = []; // Ocultar sugerencias al buscar
+    this.rutasFiltradas = this.rutas.filter((ruta: any) => {
+      const origenMatch = this.puntoPartida ? (ruta.origen && ruta.origen.toLowerCase().includes(this.puntoPartida.toLowerCase())) : true;
+      const destinoMatch = this.destinoBusqueda ? (ruta.destino && ruta.destino.toLowerCase().includes(this.destinoBusqueda.toLowerCase())) : true;
+      return origenMatch && destinoMatch;
+    });
+    this.cdr.detectChanges();
+  }
+
+  // Obtener ubicación GPS actual y asignarla automáticamente al punto de partida
+  obtenerUbicacionActual() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          this.origenBusqueda = 'Mi ubicación actual (Soacha)';
+          this.puntoPartida = 'Mi ubicación actual (GPS)';
           this.cdr.detectChanges();
         },
         (error) => {
-          alert('No se pudo obtener tu ubicación actual.');
-        }
+          console.warn('No se pudo obtener la ubicación:', error.message);
+          alert('No se pudo acceder a la ubicación GPS. Verifica los permisos de tu navegador.');
+        },
+        { enableHighAccuracy: true }
       );
+    } else {
+      alert('La geolocalización no es compatible en este dispositivo.');
     }
   }
 
-  // Búsqueda inteligente por puntos de referencia (Origen, Destino o Paradas)
- buscarRutasCoincidentes() {
-  this.busquedaRealizada = true;
-  const origenFiltro = this.origenBusqueda.toLowerCase().trim();
-  const destinoFiltro = this.destinoBusqueda.toLowerCase().trim();
+  verDetallesRuta(id: any) {
+    this.router.navigate(['/detalle-ruta'], { queryParams: { id } });
+  }
 
-  this.resultados = this.todasLasRutas.filter((r: any) => {
-    const origenRuta = (r.origen || '').toLowerCase();
-    const destinoRuta = (r.destino || '').toLowerCase();
-    
-    // Extraemos los nombres de las paradas de la tabla relacional de Supabase
-    const nombreParadas: string[] = [];
-    if (r.parada && Array.isArray(r.parada)) {
-      r.parada.forEach((p: any) => {
-        if (p && p.nombre) {
-          nombreParadas.push(String(p.nombre).toLowerCase());
-        }
-      });
-    }
-
-    // Verificamos si el destino o parada de llegada coincide
-    const coincideDestino = !destinoFiltro || 
-      destinoRuta.includes(destinoFiltro) || 
-      origenRuta.includes(destinoFiltro) ||
-      nombreParadas.some((nombre: string) => nombre.includes(destinoFiltro));
-
-    // Verificamos el origen
-    const esUbicacionActual = origenFiltro.includes('ubicación') || origenFiltro === '';
-    const coincideOrigen = esUbicacionActual || 
-      origenRuta.includes(origenFiltro) || 
-      destinoRuta.includes(origenFiltro) ||
-      nombreParadas.some((nombre: string) => nombre.includes(origenFiltro));
-
-    // Si solo escribió el destino, mostramos las rutas que pasen por ahí o lleguen ahí
-    if (origenFiltro === '' || origenFiltro.includes('ubicación')) {
-      return coincideDestino;
-    }
-
-    return coincideOrigen && coincideDestino;
-  });
-
-  this.cdr.detectChanges();
-}
-
-  verEnMapa(r: any) {
-  const idRuta = r.id_ruta || r.id;
-  this.router.navigate(['/detalle-ruta'], { queryParams: { id: idRuta } });
-}
+  iniciarNavegacion(id: any) {
+    this.router.navigate(['/navegacion-mapa'], { queryParams: { id } });
+  }
 }

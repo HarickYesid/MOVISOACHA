@@ -1,174 +1,204 @@
-.tarjeta-admin {
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+.admin-content {
+  --background: #4886d8; // Fondo verde claro
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.subtitulo-seccion {
-  color: #1d5798;
-  font-weight: 700;
-  font-size: 16px;
-  border-bottom: 1px solid #e1e8f0;
-  padding-bottom: 6px;
-  margin-bottom: 12px;
+.formulario-container {
+  max-width: 750px;
+  margin: 30px auto;
+  padding: 28px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
-.instruccion-fotos {
+/* Estilo para el título principal con fondo azul */
+.header-bloque-principal {
+  background: #1e62ba; // Azul corporativo MoviSoacha
+  color: white;
+  padding: 14px 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  text-align: center;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+}
+
+/* Estilo para los subtítulos de las secciones con fondo azul */
+.seccion-titulo-azul {
+  background: #1e62ba; // Azul corporativo MoviSoacha
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+  }
+}
+
+.subtitulo-desc {
   font-size: 13px;
-  color: #68788e;
-  margin: 10px 0 5px;
-}
-
-.item-upload input[type="file"] {
-  padding: 8px 0;
-  font-size: 13px;
-}
-
-.grid-fotos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
+  color: #555;
   margin-bottom: 15px;
 }
 
-.tarjeta-ruta-item {
-  border-left: 5px solid #1d5798;
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.campo-estilizado {
+  --background: #fafafa;
+  --border-radius: 12px;
+  border: 1.5px solid #cfd8dc;
   border-radius: 12px;
-  margin-bottom: 12px;
-}
+  margin-bottom: 15px;
+  color: #333;
 
-.paradas-lista {
-  background: #f8fafc;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin: 10px 0;
-
-  ol {
-    margin: 5px 0 0 15px;
-    padding: 0;
-  }
-}
-/* --- LISTADO DE RUTAS - DISEÑO TEMA OSCURO --- */
-.contenedor-rutas-registradas {
-  background-color: #121212;
-  padding: 16px;
-  border-radius: 12px;
-
-  .titulo-seccion-rutas {
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 16px;
+  &:focus-within {
+    border-color: #1b5e20;
+    box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
   }
 }
 
-.lista-tarjetas-rutas {
+/* Scroll horizontal ampliado para las 5 imágenes */
+.imagenes-scroll {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 12px;
 
-/* Tarjeta Principal */
-.tarjeta-ruta-oscura {
-  background-color: #1e1e1e;
-  border-left: 4px solid #1a73e8; /* Borde azul característico de la izquierda */
-  border-radius: 10px;
-  padding: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-
-  &:hover {
-    background-color: #282828;
-  }
-
-  &:active {
-    transform: scale(0.99);
-  }
-
-  /* Sección Izquierda (Texto y Botones) */
-  .info-izquierda {
-    flex: 1;
-    padding-right: 12px;
-
-    .nombre-ruta-titulo {
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0 0 10px 0;
-    }
-
-    .detalle-origen-destino,
-    .detalle-tiempo {
-      color: #b0bec5;
-      font-size: 13px;
-      margin: 4px 0;
-
-      strong {
-        color: #e0e0e0;
-      }
-    }
-
-    /* Botones de Eliminar y Editar */
-    .acciones-botones {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 12px;
-
-      .btn-accion {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        background: transparent;
-        border-radius: 6px;
-        padding: 6px 14px;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        width: fit-content;
-        transition: all 0.2s ease;
-
-        ion-icon {
-          font-size: 14px;
-        }
-      }
-
-      /* Botón Eliminar con borde rojo */
-      .btn-eliminar {
-        border: 1.5px solid #ff4d4f;
-        color: #ff4d4f;
-
-        &:hover {
-          background-color: rgba(255, 77, 79, 0.15);
-        }
-      }
-
-      /* Botón Editar con borde verde */
-      .btn-editar {
-        border: 1.5px solid #52c41a;
-        color: #ffffff;
-
-        &:hover {
-          background-color: rgba(82, 196, 26, 0.2);
-        }
-      }
-    }
-  }
-
-  /* Sección Derecha (Letrero) */
-  .imagen-derecha-letrero {
+  .imagen-card-item {
+    background: #f9f9f9;
+    border: 1.5px solid #d0d7de;
+    border-radius: 14px;
+    padding: 14px;
+    min-width: 170px; // Cuadro general más ancho
+    max-width: 170px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 
-    img {
-      max-height: 120px;
-      width: auto;
-      object-fit: contain;
-      border-radius: 8px;
+    .img-label {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1b5e20; // Texto en verde oscuro acorde al diseño
+      height: 30px;
+      display: flex;
+      align-items: center;
+    }
+
+    .img-preview-box {
+  width: 140px;
+  height: 140px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  border: 1px solid #b0bec5;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; // <-- Cambiar de 'cover' a 'contain'
+  }
+
+      .sin-img {
+        font-size: 11px;
+        color: #777;
+      }
+    }
+
+    .input-file {
+      font-size: 11px;
+      width: 100%;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .badge-listo {
+      font-size: 11px;
+      color: #2e7d32;
+      margin-top: 6px;
+      font-weight: bold;
+    }
+  }
+}
+
+.paradas-select-box {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+}
+
+.botones-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 35px;
+
+  .btn-rojo {
+    flex: 1;
+    height: 48px;
+    background: #189c18; // Rojo principal
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(183, 28, 28, 0.3);
+    transition: background 0.2s, transform 0.1s;
+
+    &:hover {
+      background: #8e0000;
+    }
+
+    &:disabled {
+      background: #b0bec5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+
+  .btn-rojo-secundario {
+    flex: 1;
+    height: 48px;
+    background: #e53935;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+    transition: background 0.2s;
+
+    &:hover {
+      background: #c62828;
     }
   }
 }

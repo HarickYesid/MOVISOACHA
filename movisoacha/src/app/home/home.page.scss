@@ -1,165 +1,226 @@
-
+// Contenedor principal a pantalla completa
 .acceso-content {
-  --background: #104b91;
+  --background: transparent;
 }
 
+// Capa de la imagen de fondo con oscurecimiento para mejor lectura
 .fondo {
   position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(10, 48, 98, 0.35),
-      rgba(4, 30, 63, 0.92)
-    ),
-    linear-gradient(135deg, #1761aa, #08264d);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  // Reemplaza 'fondo-soacha.jpg' con el nombre de tu archivo en src/assets/img/
+  background: url('/assets/icon/fondo.jpg') no-repeat center center / cover;
+  z-index: 0;
+
+  // Capa oscura translúcida encima de la imagen
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55); // Ajusta la opacidad si lo deseas
+  }
 }
 
+// Contenedor general que organiza el espacio en la pantalla
 .contenedor {
   position: relative;
   z-index: 1;
-  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 28px 20px;
-  max-width: 520px;
-  margin: 0 auto;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+
+  // En pantallas medianas o grandes (Tablets y PCs), empujamos todo hacia la DERECHA
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: flex-end; // <-- Esto alinea el contenido a la derecha
+    align-items: center;
+    padding: 40px 80px;
+    gap: 60px;
+  }
 }
 
+// Sección de la Marca / Título (MoviSoacha)
 .marca {
   text-align: center;
   color: white;
-  margin-bottom: 26px;
+  margin-bottom: 24px;
+
+  @media (min-width: 768px) {
+    text-align: left;
+    margin-bottom: 0;
+    flex: 1; // Ocupa el espacio de la izquierda para equilibrar
+  }
+
+  .icono-bus {
+    font-size: 48px;
+    background: rgba(25, 118, 210, 0.85);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+
+    @media (min-width: 768px) {
+      margin: 0 0 16px 0; // Alineado a la izquierda en PC
+    }
+
+    ion-icon {
+      color: white;
+    }
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0;
+    
+    span {
+      color: #64b5f6;
+    }
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #cfd8dc;
+    margin: 8px 0 0 0;
+  }
 }
 
-.icono-bus {
-  font-size: 58px;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-.marca h1 {
-  font-size: 36px;
-  font-weight: 800;
-  letter-spacing: -1px;
-  margin: 8px 0;
-}
-
-.marca h1 span {
-  color: #42e4d0;
-}
-
-.marca p {
-  font-size: 17px;
-  margin-top: 8px;
-  color: #edf6ff;
-}
-
+// Sección de la Tarjeta del Formulario (Login / Registro)
 .tarjeta {
-  background: #fff;
-  color: #162b46;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 24px;
-  padding: 25px 20px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+  padding: 28px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+
+  .encabezado-formulario {
+    margin-bottom: 20px;
+
+    h2 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0 0 6px 0;
+    }
+
+    p {
+      color: #90a4ae;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+  }
 }
 
-.encabezado-formulario h2 {
-  font-size: 25px;
-  font-weight: 750;
-  margin: 0 0 8px;
-}
-
-.encabezado-formulario p {
-  color: #68788e;
-  line-height: 1.5;
-  margin-bottom: 20px;
-}
-
+// Estilos de campos e inputs dentro de la tarjeta
 .campo {
-  --background: #f3f6fa;
-  --border-radius: 12px;
-  --padding-start: 12px;
-  margin: 12px 0;
-  border: 1px solid #e1e8f0;
-  border-radius: 12px;
-  color: #162b46;               /* Color del texto que escribe el usuario */
-  --highlight-color: #1555a0;   /* Color de la línea inferior cuando está seleccionado */
-  --color: #162b46;
-}
+  --background: rgba(255, 255, 255, 0.07);
+  --border-radius: 14px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
 
-.campo ion-icon {
-  color: #1d5798;
-  font-size: 21px;
+  ion-icon {
+    color: #90caf9;
+    margin-inline-end: 10px;
+  }
 }
 
 .ayuda-contrasena {
-  color: #000000;
-  font-size: 12px;
-  margin: 6px 4px 12px;
+  font-size: 0.8rem;
+  color: #90a4ae;
+  margin-top: -8px;
+  margin-bottom: 14px;
+  padding-left: 4px;
 }
 
 .boton-principal {
-  margin-top: 22px;
-  --background: #1555a0;
-  --background-activated: #0d3c75;
-  --border-radius: 12px;
-  --box-shadow: none;
-  font-weight: 700;
-  height: 50px;
+  --background: #1976d2;
+  --border-radius: 14px;
+  height: 48px;
+  font-weight: bold;
+  margin-top: 10px;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.4);
 }
 
 .mensaje {
-  margin: 15px 0 0;
-  padding: 10px;
-  border-radius: 9px;
-  background: #e6f8ed;
-  color: #176b3a;
-  font-size: 14px;
-  overflow-wrap: anywhere;
-}
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 12px;
+  color: #81c784;
 
-.mensaje.error {
-  background: #fff0f0;
-  color: #b42318;
+  &.error {
+    color: #e57373;
+  }
 }
 
 .separador {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #8a97a8;
-  margin: 22px 0 12px;
-}
+  text-align: center;
+  margin: 18px 0;
+  color: rgba(255, 255, 255, 0.3);
 
-.separador::before,
-.separador::after {
-  content: "";
-  height: 1px;
-  background: #e2e8f0;
-  flex: 1;
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  span {
+    padding: 0 10px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
 }
 
 .cambiar-modo {
   text-align: center;
-  font-size: 14px;
-  line-height: 1.7;
-  color: #596a80;
-  margin-bottom: 0;
-}
+  font-size: 0.85rem;
+  color: #b0bec5;
+  margin: 0;
 
-.cambiar-modo button {
-  border: 0;
-  background: transparent;
-  color: #1555a0;
-  font-weight: 750;
-  font-size: inherit;
-  padding: 4px;
+  button {
+    background: transparent;
+    border: none;
+    color: #90caf9;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .pie {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  width: 100%;
   text-align: center;
-  color: #edf6ff;
-  font-size: 13px;
-  margin-top: 22px;
+  color: rgba(248, 245, 245, 0.952);
+  background-color: #284fa3;
+  font-size: 1rem;
+  margin: 0;
 }

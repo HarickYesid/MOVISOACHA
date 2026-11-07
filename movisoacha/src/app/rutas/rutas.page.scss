@@ -1,147 +1,432 @@
-.contenido-oscuro {
-  --background: #121212;
-  color: #ffffff;
+.admin-content {
+  --background: #f4f7fb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.sin-rutas {
-  text-align: center;
-  color: #888888;
-  padding: 40px 0;
+.layout-container {
+  display: flex;
+  min-height: 100vh;
 }
 
-.lista-tarjetas-rutas {
+/* ==========================================
+   BARRA LATERAL (SIDEBAR)
+   ========================================== */
+.sidebar {
+  width: 240px;
+  background: #1e62ba;
+  color: white;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
+  padding: 24px 16px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 
-/* Tarjeta Oscura con Borde Azul */
-.tarjeta-ruta-oscura {
-  background-color: #1e1e1e;
-  border-left: 4px solid #1a73e8;
-  border-radius: 10px;
-  padding: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
 
-  &:hover {
-    background-color: #282828;
-  }
-
-  .info-izquierda {
-    flex: 1;
-    padding-right: 12px;
-
-    .nombre-ruta-titulo {
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0 0 10px 0;
-    }
-
-    .detalle-origen-destino,
-    .detalle-tiempo {
-      color: #b0bec5;
-      font-size: 13px;
-      margin: 4px 0;
-
-      strong {
-        color: #e0e0e0;
-      }
-    }
-
-    .acciones-botones {
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: #154e96;
+      border-radius: 50%;
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 12px;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+    }
 
-      .btn-accion {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        background: transparent;
-        border-radius: 6px;
-        padding: 6px 14px;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        width: fit-content;
+    .logo-text {
+      h2 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: white;
+        span { color: #82b1ff; }
       }
-
-      .btn-eliminar {
-        border: 1.5px solid #ff4d4f;
-        color: #ff4d4f;
-
-        &:hover {
-          background-color: rgba(255, 77, 79, 0.15);
-        }
-      }
-
-      .btn-editar {
-        border: 1.5px solid #52c41a;
-        color: #ffffff;
-
-        &:hover {
-          background-color: rgba(82, 196, 26, 0.2);
-        }
+      p {
+        margin: 0;
+        font-size: 0.75rem;
+        color: #bbdefb;
       }
     }
   }
 
-  .imagen-derecha-letrero {
-    img {
-      max-height: 120px;
-      width: auto;
-      object-fit: contain;
-      border-radius: 8px;
+  .menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 12px 16px;
+      background: transparent;
+      border: none;
+      border-radius: 20px;
+      color: #e3f2fd;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+
+      ion-icon { font-size: 20px; }
+
+      &:hover { background: rgba(255, 255, 255, 0.15); }
+
+    /* Estilo idéntico a la referencia visual para la pestaña activa en rojo */
+      &.active-rojo {
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .logout-container {
+    margin-top: 20px;
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 16px;
+      background: #ffffff;
+      color: #0d47a1;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      ion-icon { font-size: 20px; }
     }
   }
 }
 
-/* Modal */
-.modal-encabezado {
+/* ==========================================
+   PANEL PRINCIPAL
+   ========================================== */
+.main-panel {
+  flex: 1;
+  padding: 24px 32px;
+  background: #ffffff;
+  border-top-left-radius: 24px;
+  border-bottom-left-radius: 24px;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.top-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-}
 
-.modal-galeria {
-  margin-top: 16px;
-
-  .letrero-box {
-    background: #000;
-    padding: 8px;
-    text-align: center;
-    border-radius: 8px;
-    margin-bottom: 12px;
-
-    p {
-      color: #888;
-      font-size: 11px;
-      margin: 0 0 4px 0;
+  .title-section {
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #1a237e;
     }
-
-    img {
-      max-height: 100px;
+    p {
+      margin: 4px 0 0 0;
+      color: #5c6bc0;
+      font-size: 0.9rem;
     }
   }
 
-  .bus-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-
-    img {
-      width: 100%;
-      height: 90px;
-      object-fit: cover;
-      border-radius: 6px;
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    .icon-btn {
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      color: #1a237e;
+      cursor: pointer;
     }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      font-size: 40px;
+      color: #1a237e;
+    }
+  }
+}
+
+/* Tarjeta Principal Estilo Gestión */
+.gestion-card {
+  background: #f0f7f6;
+  border-radius: 20px;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .gestion-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .title-block {
+      h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1a237e;
+      }
+      h1 {
+        margin: 2px 0 0 0;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #1a237e;
+      }
+    }
+  }
+
+  /* Tarjeta Contador */
+  .contador-card {
+    background: #ffffff;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 16px 24px;
+    max-width: 260px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+
+    .numero {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #c0ae0c;
+      line-height: 1;
+    }
+    .etiqueta {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #c0ae0c;
+      margin-top: 4px;
+    }
+  }
+
+  /* Barra de Búsqueda */
+  .search-filter-container {
+    display: flex;
+    gap: 12px;
+
+    .search-bar-wrapper {
+      flex: 1;
+      background: #ffffff;
+      border: 1.5px solid #cfd8dc;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      height: 48px;
+
+      ion-icon {
+        font-size: 20px;
+        color: #78909c;
+        margin-right: 10px;
+      }
+
+      input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 0.95rem;
+        background: transparent;
+        color: #333;
+        &::placeholder { color: #90a4ae; }
+      }
+    }
+
+    .filter-btn {
+      width: 48px;
+      height: 48px;
+      background: #ffffff;
+      border: 1.5px solid #cfd8dc;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #37474f;
+      cursor: pointer;
+      &:hover { background: #eceff1; }
+    }
+  }
+
+  /* Lista de Rutas */
+  .lista-rutas {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .ruta-card-item {
+      background: linear-gradient(145deg, #1e1e1e, #181818);
+      border: 1px solid #2c2c2c;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+      .ruta-info-block {
+        flex: 1;
+
+        h3 {
+          margin: 0 0 10px 0;
+          color: #ffffff;
+          font-size: 1.3rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          ion-icon {
+            color: #64b5f6;
+            font-size: 1.4rem;
+          }
+        }
+
+        .ruta-detalles-box {
+          background: rgba(255, 255, 255, 0.03);
+          padding: 10px 12px;
+          border-radius: 8px;
+          margin-bottom: 12px;
+          border-left: 3px solid #3880ff;
+
+          p {
+            margin: 0 0 4px 0;
+            color: #ddd;
+            font-size: 0.95rem;
+            &:last-child { margin-bottom: 0; }
+          }
+        }
+
+        .acciones-row {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          align-items: center;
+
+          .btn-eliminar {
+            background: #d9534f;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            &:hover { background: #c9302c; }
+          }
+
+          .btn-editar {
+            background: #f0ad4e;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            &:hover { background: #ec971f; }
+          }
+
+          .btn-trazado {
+            font-weight: 500;
+            text-transform: none;
+            margin: 0;
+          }
+        }
+      }
+
+      .ruta-imagen-block {
+        flex-shrink: 0;
+        text-align: center;
+
+        .letrero-frame {
+          background: #111;
+          padding: 4px;
+          border-radius: 10px;
+          border: 1px solid #333;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+
+          img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            display: block;
+          }
+        }
+
+        span {
+          font-size: 0.75rem;
+          color: #888;
+          margin-top: 4px;
+          display: block;
+        }
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #78909c;
+      font-size: 1rem;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px dashed #cfd8dc;
+
+      ion-icon {
+        font-size: 48px;
+        color: #90a4ae;
+        margin-bottom: 8px;
+      }
+    }
+  }
+}
+
+/* Responsivo para móviles */
+@media (max-width: 768px) {
+  .layout-container { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    padding: 16px;
+    .menu-nav {
+      flex-direction: row;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      .nav-btn { white-space: nowrap; }
+    }
+  }
+  .main-panel { border-radius: 0; padding: 16px; }
+  .ruta-card-item {
+    flex-direction: column;
+    align-items: stretch !important;
   }
 }

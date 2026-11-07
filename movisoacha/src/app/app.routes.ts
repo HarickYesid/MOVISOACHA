@@ -57,6 +57,37 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./chat/chat.page').then( m => m.ChatPage)
   },
+  {
+    path: 'restablecer-contrasena',
+    canActivate: [authGuard],
+    loadComponent: () => import('./restablecer-contrasena/restablecer-contrasena.page').then( m => m.RestablecerContrasenaPage)
+  },
+  {
+    path: 'panel-admin',
+    canActivate: [authGuard],
+    loadComponent: () => import('./panel-admin/panel-admin.page').then( m => m.PanelAdminPage)
+  },
+  
+  {
+    path: 'paradas',
+    canActivate: [authGuard],
+    loadComponent: () => import('./paradas/paradas.page').then( m => m.ParadasPage)
+  },
+  {
+    path: 'empresas',
+    canActivate: [authGuard],
+    loadComponent: () => import('./empresas/empresas.page').then( m => m.EmpresasPage)
+  },
+  {
+    path: 'lista-usuarios',
+    canActivate: [authGuard],
+    loadComponent: () => import('./lista-usuarios/lista-usuarios.page').then( m => m.ListaUsuariosPage)
+  },
+  {
+    path: 'navegacion-mapa',
+    canActivate: [authGuard],
+    loadComponent: () => import('./navegacion-mapa/navegacion-mapa.page').then( m => m.NavegacionMapaPage)
+  },
     {
     path: '',
     redirectTo: 'home',
